@@ -252,6 +252,27 @@ input.guest-num:focus{outline:none;border-color:var(--accent)}
 .community-empty{grid-column:1/-1;text-align:center;padding:2rem;color:var(--medium);font-style:italic;font-size:0.85rem}
 .featured-tag{font-size:0.62rem;background:#FDF5EF;color:var(--accent);padding:2px 6px;border-radius:10px;margin-left:4px}
 .unit-label{font-size:0.72rem;color:var(--medium);width:70px;text-align:right}
+.custom-add{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:0.75rem;color:var(--medium);margin-bottom:0.6rem}
+.custom-card{border:1.5px solid var(--light);border-radius:12px;padding:0.85rem;margin-bottom:0.7rem;background:#FFFDF9}
+.custom-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;font-size:0.85rem}
+.custom-head strong{font-weight:500}
+.custom-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:0.6rem}
+.custom-lbl{font-size:0.72rem;color:var(--medium);width:44px}
+.custom-name{margin-bottom:0.6rem}
+.custom-name input{width:min(320px,100%)}
+.custom-tip{font-size:0.74rem;color:var(--medium);margin-bottom:0.6rem;line-height:1.5}
+.custom-actions{display:flex;justify-content:flex-end}
+.custom-preview{margin-left:auto}
+.swatch{width:24px;height:24px;border-radius:50%;border:2px solid var(--light);cursor:pointer;padding:0}
+.swatch.active{border-color:var(--dark);box-shadow:0 0 0 2px white inset}
+input[type=color]{width:30px;height:26px;border:none;background:none;padding:0;cursor:pointer}
+.shape-piece{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.15;padding:6%;box-shadow:0 3px 6px rgba(40,20,5,0.35);overflow:hidden;font-weight:500}
+.shape-piece span{overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.checker{width:180px;height:180px;border-radius:10px;border:1px solid var(--light);display:flex;align-items:center;justify-content:center;background-color:#fff;background-image:linear-gradient(45deg,#eee 25%,transparent 25%),linear-gradient(-45deg,#eee 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eee 75%),linear-gradient(-45deg,transparent 75%,#eee 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0}
+.checker img{max-width:92%;max-height:92%}
+.check-row{font-size:0.78rem;display:flex;align-items:center;gap:5px}
+.range-inline{font-size:0.75rem;color:var(--medium);display:flex;align-items:center;gap:6px}
+.range-inline input{accent-color:var(--accent)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--dark);color:white;font-size:0.82rem;padding:0.65rem 1rem;border-radius:10px;opacity:0;pointer-events:none;transition:all 0.25s;max-width:calc(100% - 32px);text-align:center;z-index:2000}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .affiliate-note{font-size:0.78rem;color:var(--medium);background:var(--warm);border-radius:8px;padding:0.55rem 0.8rem;margin-bottom:0.85rem}
@@ -319,6 +340,8 @@ button:disabled{opacity:0.6;cursor:wait}
         <button class="btn" onclick="StyleBoard.autoArrange()">Auto-arrange</button>
         <button class="btn" onclick="StyleBoard.clear()">Clear</button>
       </div>
+      <div class="custom-add"><span>Not on the list?</span><button class="btn sm" onclick="CustomFood.openShape()">+ Add a named shape</button><button class="btn sm" onclick="CustomFood.openPhoto()">+ Add your own photo</button></div>
+      <div id="customPanel" style="display:none"></div>
       <div class="piece-toolbar" id="pieceToolbar"></div>
       <div class="vboard-outer" id="vboardOuter" onpointerdown="StyleBoard.deselect(event)"><div class="vboard-canvas wood" id="vboardCanvas"></div></div>
       <div class="vboard-dims" id="vboardDims"></div>
@@ -402,6 +425,7 @@ button:disabled{opacity:0.6;cursor:wait}
 <script src="js/data.js"></script>
 <script src="js/food.js"></script>
 <script src="js/community.js"></script>
+<script src="js/custom-food.js"></script>
 <script src="js/style-board.js"></script>
 <script src="js/app.js"></script>
 </body>

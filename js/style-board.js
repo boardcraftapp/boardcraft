@@ -167,7 +167,14 @@ var StyleBoard = (function () {
     d.style.top = p.y * scale - sizePx / 2 + "px";
     d.style.transform = "rotate(" + (p.rot || 0) + "deg)";
     d.style.zIndex = p.z || 1;
-    if (f.img) {
+    if (p.kind === "shape") {
+      d.innerHTML = CustomFood.shapeHtml(p, sizePx);
+    } else if (p.kind === "photo") {
+      var src = CustomFood.imageSrc(p.imgId);
+      d.innerHTML = src
+        ? '<img src="' + src + '" alt="' + esc(p.item) + '" draggable="false">'
+        : CustomFood.shapeHtml({ shape: "circle", color: "#E8DDD0", item: p.item }, sizePx);
+    } else if (f.img) {
       d.innerHTML =
         '<img src="' + f.img + '" alt="' + esc(p.item) + '" draggable="false" loading="lazy">';
     } else {
@@ -449,9 +456,13 @@ var StyleBoard = (function () {
       render();
     },
     remove: function () {
+      var gone = find(selected);
       state.pieces = state.pieces.filter(function (p) {
         return p.uid !== selected;
       });
+      // forget an uploaded photo once no piece on the board uses it
+      if (gone && gone.imgId && !state.pieces.some(function (p) { return p.imgId === gone.imgId; }))
+        CustomFood.forgetImage(gone.imgId);
       selected = null;
       save();
       render();
@@ -464,6 +475,18 @@ var StyleBoard = (function () {
         });
         renderToolbar();
       }
+    },
+    // Adds one of the visitor's own foods (a named shape or an uploaded photo) to the board.
+    addCustom: function (piece) {
+      var p = Object.assign({ uid: uid(), cat: "custom", rot: 0, z: topZ() + 1 }, piece);
+      // drop it at the first free-ish spot near the middle
+      p.x = state.len / 2 + (Math.random() - 0.5) * state.len * 0.3;
+      p.y = state.wid / 2 + (Math.random() - 0.5) * state.wid * 0.3;
+      state.pieces.push(p);
+      selected = p.uid;
+      keepInside();
+      save();
+      render();
     },
     itemsOnBoard: function () {
       return state.pieces.map(function (p) {
