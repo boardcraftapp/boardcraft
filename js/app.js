@@ -256,6 +256,9 @@ function sendToShop() {
   updateShopStats();
   switchTab("shop");
 }
+function getEmoji(cat, item) {
+  return itemEmojis[item] || (foodIcons[cat] ? foodIcons[cat].emoji : "&#129472;");
+}
 function renderPreview() {
   var pb = document.getElementById("previewBoard");
   var items = Object.values(boardSelected);
@@ -824,16 +827,12 @@ function initTools() {
   toolsList.forEach(function (tool) {
     var card = document.createElement("div");
     card.className = "tool-card";
+    var action = tool.q || tool.url
+      ? '<a class="tool-link" href="' + esc(amazonLink(tool)) + '" target="_blank" rel="sponsored noopener">Shop on Amazon &rarr;</a>'
+      : '<span class="tool-nolink">Find it at the grocery store</span>';
     card.innerHTML =
-      '<div class="tool-icon">' +
-      tool.icon +
-      '</div><div class="tool-name">' +
-      tool.name +
-      '</div><div class="tool-desc">' +
-      tool.desc +
-      '</div><div style="font-size:0.68rem;color:var(--medium);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em">' +
-      tool.cat +
-      "</div><button class=\"tool-link\" onclick=\"window.open('https://quinnandcogulfcoast.com/shop','_blank')\">Shop now &rarr;</button>";
+      '<div class="tool-icon">' + tool.icon + '</div><div class="tool-name">' + tool.name + '</div><div class="tool-desc">' + tool.desc +
+      '</div><div class="tool-cat">' + tool.cat + "</div>" + action;
     grid.appendChild(card);
   });
 }

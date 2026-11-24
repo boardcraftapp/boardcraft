@@ -237,7 +237,7 @@ input.guest-num:focus{outline:none;border-color:var(--accent)}
 .vboard-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem;color:rgba(60,30,10,0.75);font-size:0.85rem}
 .piece{position:absolute;cursor:grab;touch-action:none}
 .piece img{width:100%;height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 3px 4px rgba(40,20,5,0.45))}
-.piece-fallback{width:100%;height:100%;border-radius:50%;background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;text-align:center;font-size:0.65rem;color:var(--dark);padding:4px;box-shadow:0 3px 6px rgba(0,0,0,0.25)}
+.piece-fallback{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1;box-shadow:0 3px 6px rgba(0,0,0,0.25)}
 .piece-label{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);font-size:0.6rem;font-weight:500;color:white;background:rgba(0,0,0,0.5);padding:1px 6px;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.15s}
 .piece:hover .piece-label,.piece.selected .piece-label{opacity:1}
 .piece.selected{outline:2px dashed rgba(255,255,255,0.9);outline-offset:2px;border-radius:6px}
@@ -252,6 +252,10 @@ input.guest-num:focus{outline:none;border-color:var(--accent)}
 .unit-label{font-size:0.72rem;color:var(--medium);width:70px;text-align:right}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--dark);color:white;font-size:0.82rem;padding:0.65rem 1rem;border-radius:10px;opacity:0;pointer-events:none;transition:all 0.25s;max-width:calc(100% - 32px);text-align:center;z-index:2000}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.affiliate-note{font-size:0.78rem;color:var(--medium);background:var(--warm);border-radius:8px;padding:0.55rem 0.8rem;margin-bottom:0.85rem}
+.tool-cat{font-size:0.68rem;color:var(--medium);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em}
+a.tool-link{text-decoration:none}
+.tool-nolink{font-size:0.73rem;color:var(--medium);font-style:italic;padding:0.4rem 0}
 .site-footer{text-align:center;font-size:0.7rem;color:var(--medium);padding:2rem 0 1rem}
 .site-footer a{color:var(--accent)}
 button:disabled{opacity:0.6;cursor:wait}
@@ -374,6 +378,7 @@ button:disabled{opacity:0.6;cursor:wait}
   </div>
   <div id="tools" class="panel">
     <div class="shop-banner"><div class="shop-banner-text"><h3>Quinn &amp; Co Gulf Coast</h3><p>Everything you need for the perfect board</p></div><button class="shop-banner-btn" onclick="window.open('https://quinnandcogulfcoast.com/shop','_blank')">Visit the shop &rarr;</button></div>
+    <p class="affiliate-note">As an Amazon Associate I earn from qualifying purchases.</p>
     <div class="tools-grid" id="toolsGrid"></div>
   </div>
   <div id="export" class="panel">
@@ -388,7 +393,7 @@ button:disabled{opacity:0.6;cursor:wait}
     </div>
   </div>
   <div id="tips" class="panel"><div class="tips-grid" id="tipsGrid"></div></div>
-  <footer class="site-footer">Food photos from Wikimedia Commons. <a href="credits.html">Photo credits</a></footer>
+  <footer class="site-footer"></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="js/store.js"></script>

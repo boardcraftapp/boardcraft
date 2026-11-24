@@ -169,38 +169,26 @@ var flavorColors = {
   creamy: "#8B6914",
   crunchy: "#4A6741",
 };
+// Tools tab. Each "q" is an Amazon search; the store's Associates tag is added by amazonLink().
+// To point an item at one specific product later, replace "q" with "url": "https://www.amazon.com/dp/...".
+var AMAZON_TAG = "882803f-20";
 var toolsList = [
-  {
-    icon: "&#x1FAB5;",
-    name: "Wood charcuterie boards",
-    desc: "Acacia, walnut, and maple boards in various sizes.",
-    cat: "Boards",
-  },
-  {
-    icon: "&#x2B1B;",
-    name: "Slate serving boards",
-    desc: "Elegant dark slate for high-contrast presentation.",
-    cat: "Boards",
-  },
-  {
-    icon: "&#x1F52A;",
-    name: "Cheese knives set",
-    desc: "Spreaders, chisels, and slicers for every texture.",
-    cat: "Knives",
-  },
-  { icon: "&#x1F37D;", name: "Mini ramekins & bowls", desc: "For olives, jams, honey, and dips.", cat: "Serveware" },
-  { icon: "&#x1F9C5;", name: "Charcuterie picks & forks", desc: "Small picks for easy grabbing.", cat: "Serveware" },
-  { icon: "&#x1FAD9;", name: "Small glass jars", desc: "Perfect for portioned condiments.", cat: "Serveware" },
-  { icon: "&#x1F4C4;", name: "Parchment & wax paper", desc: "For lining boards and presentation.", cat: "Supplies" },
-  {
-    icon: "&#x1F33F;",
-    name: "Fresh herb bundles",
-    desc: "Rosemary, thyme, sage — cheapest visual upgrade.",
-    cat: "Garnishes",
-  },
-  { icon: "&#x1F3F7;", name: "Mini chalk labels", desc: "Label cheeses and meats like a pro.", cat: "Supplies" },
-  { icon: "&#x1F9FA;", name: "Grazing table liners", desc: "Parchment rolls and linen runners.", cat: "Supplies" },
+  { icon: "&#x1F381;", name: "Starter kit: board + knives", desc: "A board and knife set together, the easiest way to start.", cat: "Starter kit", q: "charcuterie+board+and+knife+set" },
+  { icon: "&#x1FAB5;", name: "Wood charcuterie boards", desc: "Acacia, walnut, and maple boards in various sizes.", cat: "Boards", q: "acacia+charcuterie+board+with+handle" },
+  { icon: "&#x2B1B;", name: "Slate serving boards", desc: "Elegant dark slate for high-contrast presentation.", cat: "Boards", q: "slate+cheese+board+with+chalk" },
+  { icon: "&#x1F52A;", name: "Cheese knives set", desc: "Spreaders, chisels, and slicers for every texture.", cat: "Knives", q: "cheese+knife+set+wood+handle" },
+  { icon: "&#x1F37D;", name: "Mini ramekins & bowls", desc: "For olives, jams, honey, and dips.", cat: "Serveware", q: "ceramic+ramekins+dip+bowls+set" },
+  { icon: "&#x1F9C5;", name: "Charcuterie picks & forks", desc: "Small picks for easy grabbing.", cat: "Serveware", q: "bamboo+cocktail+picks+knotted" },
+  { icon: "&#x1FAD9;", name: "Small glass jars", desc: "Perfect for portioned condiments.", cat: "Serveware", q: "small+glass+jars+with+lids+honey" },
+  { icon: "&#x1F4C4;", name: "Parchment & wax paper", desc: "For lining boards and presentation.", cat: "Supplies", q: "parchment+paper+sheets+precut" },
+  { icon: "&#x1F33F;", name: "Fresh herb bundles", desc: "Rosemary, thyme, sage. The cheapest visual upgrade: pick them up with your groceries.", cat: "Garnishes" },
+  { icon: "&#x1F3F7;", name: "Mini chalk labels", desc: "Label cheeses and meats like a pro.", cat: "Supplies", q: "mini+chalkboard+cheese+markers" },
+  { icon: "&#x1F9FA;", name: "Grazing table liners", desc: "Butcher paper rolls for lining a grazing table.", cat: "Supplies", q: "butcher+paper+roll+18+inch" },
 ];
+function amazonLink(tool) {
+  if (tool.url) return tool.url + (tool.url.indexOf("?") > -1 ? "&" : "?") + "tag=" + AMAZON_TAG;
+  return "https://www.amazon.com/s?k=" + tool.q + "&tag=" + AMAZON_TAG;
+}
 var tips = [
   {
     title: "The rule of 3s",

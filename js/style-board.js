@@ -101,6 +101,14 @@ var StyleBoard = (function () {
       '<div class="size-inputs">' + inputs + '</div><div class="preset-row"><span>Common sizes:</span>' + presets + "</div>";
   }
 
+  // Typing in a size box redraws only the board, so the box being typed in keeps its focus.
+  function highlightPreset() {
+    document.querySelectorAll("#vboardSize .preset-chip").forEach(function (b) {
+      var m = b.getAttribute("onclick").match(/setSize\(([\d.]+),([\d.]+)\)/);
+      b.classList.toggle("active", !!m && +m[1] === state.len && +m[2] === state.wid);
+    });
+  }
+
   // ---------- board ----------
   function boardPixelSize() {
     var wrap = el("vboardOuter");
@@ -115,8 +123,9 @@ var StyleBoard = (function () {
     return { w: Math.round(w), h: Math.round(h) };
   }
 
-  function render() {
-    renderControls();
+  function render(keepControls) {
+    if (keepControls) highlightPreset();
+    else renderControls();
     var canvas = el("vboardCanvas");
     var px = boardPixelSize();
     scale = px.w / state.len;
@@ -162,7 +171,11 @@ var StyleBoard = (function () {
       d.innerHTML =
         '<img src="' + f.img + '" alt="' + esc(p.item) + '" draggable="false" loading="lazy">';
     } else {
-      d.innerHTML = '<div class="piece-fallback">' + esc(p.item) + "</div>";
+      // until a photo is added for this food, show its emoji at the same real-life size
+      var ico = (typeof getEmoji === "function" ? getEmoji(p.cat, p.item) : "") || "";
+      var bg = foodIcons[p.cat] ? foodIcons[p.cat].bg : "#FFF";
+      d.innerHTML =
+        '<div class="piece-fallback" style="background:' + bg + ";font-size:" + Math.round(sizePx * 0.5) + 'px">' + ico + "</div>";
     }
     d.innerHTML +=
       '<span class="piece-label">' +
@@ -285,42 +298,45 @@ var StyleBoard = (function () {
   }
 
   // ---------- arranging ----------
-  // Places pieces on a gentle spiral from the middle outwards, biggest items first,
-  // keeping every piece inside the board's shape.
+  // Spreads pieces evenly over the board: a sunflower pattern on round and oval boards,
+  // a loose grid on square and rectangular ones. Biggest items go first.
   function arrange(pieces) {
-    var cx = state.len / 2,
-      cy = state.wid / 2;
+    var n = pieces.length;
+    if (!n) return;
     var order = pieces.slice().sort(function (a, b) {
       return b.size - a.size;
     });
-    var placed = [];
+    var cx = state.len / 2,
+      cy = state.wid / 2;
+    var avg = order.reduce(function (s, p) {
+      return s + p.size;
+    }, 0) / n;
+    var mx = Math.max(0.5, cx - avg * 0.45),
+      my = Math.max(0.5, cy - avg * 0.45);
+    if (state.shape === "round" || state.shape === "oval") {
+      order.forEach(function (p, i) {
+        var r = n === 1 ? 0 : Math.sqrt((i + 0.5) / n);
+        var ang = i * 2.399963 + 0.6;
+        p.x = cx + Math.cos(ang) * r * mx;
+        p.y = cy + Math.sin(ang) * r * my;
+      });
+    } else {
+      var cols = Math.max(1, Math.round(Math.sqrt((n * state.len) / state.wid)));
+      var rows = Math.ceil(n / cols);
+      order.forEach(function (p, i) {
+        var c = i % cols,
+          r = Math.floor(i / cols);
+        var inRow = r === rows - 1 ? n - r * cols : cols; // centre a short last row
+        var offset = (cols - inRow) / 2;
+        p.x = cx - mx + ((c + offset + 0.5) / cols) * 2 * mx + (Math.random() - 0.5) * avg * 0.15;
+        p.y = cy - my + ((r + 0.5) / rows) * 2 * my + (Math.random() - 0.5) * avg * 0.15;
+      });
+    }
     order.forEach(function (p, i) {
-      var best = null;
-      for (var t = 0; t < 900; t++) {
-        var ang = t * 2.399963; // golden angle
-        var r = Math.sqrt(t / 900);
-        var x = cx + Math.cos(ang) * r * (state.len / 2 - p.size * 0.4);
-        var y = cy + Math.sin(ang) * r * (state.wid / 2 - p.size * 0.4);
-        if (!inside(x, y, p.size * 0.35)) continue;
-        var overlap = placed.reduce(function (a, q) {
-          var dist = Math.hypot(q.x - x, q.y - y);
-          var need = (q.size + p.size) * 0.4;
-          return a + Math.max(0, need - dist);
-        }, 0);
-        if (!best || overlap < best.o - 0.01) best = { x: x, y: y, o: overlap };
-        if (overlap === 0) break;
-      }
-      if (best) {
-        p.x = best.x;
-        p.y = best.y;
-      } else {
-        p.x = cx;
-        p.y = cy;
-      }
       p.rot = Math.round(Math.random() * 30 - 15);
       p.z = i + 1;
-      placed.push(p);
     });
+    keepInside();
   }
   function inside(x, y, margin) {
     if (state.shape === "round" || state.shape === "oval") {
@@ -346,20 +362,18 @@ var StyleBoard = (function () {
       state.shape = k;
       if (SHAPES[k].oneSize) state.wid = state.len = Math.max(state.len, state.wid);
       else if (state.len === state.wid) state.wid = Math.max(MIN_IN, Math.round(state.len * 0.66));
-      keepInside();
+      if (state.pieces.length) arrange(state.pieces);
       save();
       render();
     },
     setSize: function (l, w) {
       var s = SHAPES[state.shape];
-      if (l === undefined) {
+      var fromInputs = l === undefined;
+      if (fromInputs) {
         l = clampSize(el("sizeLen").value);
         w = s.oneSize ? l : clampSize(el("sizeWid").value);
       }
-      if (!l || !w) {
-        render();
-        return;
-      }
+      if (!l || !w) return;
       if (w > l) {
         var t = l;
         l = w;
@@ -376,7 +390,11 @@ var StyleBoard = (function () {
       state.wid = w;
       keepInside();
       save();
-      render();
+      if (fromInputs) {
+        if (Number(el("sizeLen").value) !== l) el("sizeLen").value = l;
+        if (el("sizeWid") && Number(el("sizeWid").value) !== w) el("sizeWid").value = w;
+      }
+      render(fromInputs);
     },
     loadFromBoard: function () {
       var have = {};
@@ -453,10 +471,26 @@ var StyleBoard = (function () {
       });
     },
   };
+  // Pulls any piece that ended up off the board back inside its outline.
   function keepInside() {
     state.pieces.forEach(function (p) {
-      p.x = Math.max(0, Math.min(state.len, p.x));
-      p.y = Math.max(0, Math.min(state.wid, p.y));
+      var m = Math.min(p.size * 0.3, Math.min(state.len, state.wid) / 4);
+      if (state.shape === "round" || state.shape === "oval") {
+        var cx = state.len / 2,
+          cy = state.wid / 2,
+          a = Math.max(0.5, cx - m),
+          b = Math.max(0.5, cy - m);
+        var dx = (p.x - cx) / a,
+          dy = (p.y - cy) / b,
+          r = Math.sqrt(dx * dx + dy * dy);
+        if (r > 1) {
+          p.x = cx + (dx / r) * a;
+          p.y = cy + (dy / r) * b;
+        }
+      } else {
+        p.x = Math.max(m, Math.min(state.len - m, p.x));
+        p.y = Math.max(m, Math.min(state.wid - m, p.y));
+      }
     });
   }
 })();

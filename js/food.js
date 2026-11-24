@@ -1,5 +1,5 @@
 // Food photos for the Style tab, and each portion's real-life size in inches (its longest side).
-// Photos come from Wikimedia Commons; see credits.html.
+// Foods without a photo yet are drawn with their emoji at the same size.
 var FOOD = {
  "Prosciutto": {
   "img": null,
