@@ -1,7 +1,8 @@
 // ---------- saved state ----------
 // Everything a visitor sets up is saved in their browser and restored on their next visit.
 var MIX_KEYS = ["meat", "cheese", "cracker", "veg"];
-var mix = { meat: 30, cheese: 25, cracker: 25, veg: 20 };
+var BALANCED_MIX = { meat: 30, cheese: 25, cracker: 25, veg: 20 };
+var mix = Object.assign({}, BALANCED_MIX);
 (function restore() {
   guests = Store.get("guests", guests);
   mealType = Store.get("mealType", mealType);
@@ -118,6 +119,12 @@ function setMix(key, value) {
   mix = rounded;
   Store.set("mix", mix);
   updateCalc();
+}
+function resetMix() {
+  mix = Object.assign({}, BALANCED_MIX);
+  Store.set("mix", mix);
+  updateCalc();
+  toast("Mix reset to a balanced board.");
 }
 function syncMixSliders() {
   MIX_KEYS.forEach(function (k) {
