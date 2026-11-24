@@ -137,11 +137,11 @@ var StyleBoard = (function () {
     canvas.innerHTML = "";
     if (!state.pieces.length) {
       canvas.innerHTML =
-        '<div class="vboard-empty">' +
+        '<div class="vboard-empty"><p>' +
         (Object.keys(boardSelected).length
           ? 'Tap <strong>Load my board</strong> to place your ingredients.'
           : "Pick ingredients in the <strong>Board</strong> tab first, then come back here.") +
-        "</div>";
+        "</p></div>";
     }
     state.pieces.forEach(function (p) {
       canvas.appendChild(renderPiece(p));
