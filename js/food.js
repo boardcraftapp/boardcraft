@@ -1,16 +1,25 @@
 // Food photos for the Style tab, and each portion's real-life size in inches (its longest side).
+// alts: extra photos of the same food, picked per piece so repeated items look varied.
 // Foods without a photo yet are drawn with their emoji at the same size.
 var FOOD = {
  "Prosciutto": {
-  "img": null,
-  "size": 4.5
+  "img": "img/food/prosciutto-2.webp",
+  "size": 4.5,
+  "alts": [
+   "img/food/prosciutto-2.webp",
+   "img/food/prosciutto-1.webp"
+  ]
  },
  "Salami": {
-  "img": null,
-  "size": 4
+  "img": "img/food/salami-1.webp",
+  "size": 4,
+  "alts": [
+   "img/food/salami-1.webp",
+   "img/food/salami-2.webp"
+  ]
  },
  "Soppressata": {
-  "img": null,
+  "img": "img/food/salami-2.webp",
   "size": 4
  },
  "Coppa": {
@@ -22,7 +31,7 @@ var FOOD = {
   "size": 4
  },
  "Pepperoni": {
-  "img": null,
+  "img": "img/food/pepperoni.webp",
   "size": 3.5
  },
  "Chorizo": {
@@ -34,27 +43,39 @@ var FOOD = {
   "size": 4.5
  },
  "Brie": {
-  "img": null,
+  "img": "img/food/brie.webp",
   "size": 4.5
  },
  "Aged Cheddar": {
-  "img": null,
-  "size": 3.5
+  "img": "img/food/cheddar-1.webp",
+  "size": 3.5,
+  "alts": [
+   "img/food/cheddar-1.webp",
+   "img/food/cheddar-2.webp"
+  ]
  },
  "Manchego": {
-  "img": null,
-  "size": 4
+  "img": "img/food/manchego-2.webp",
+  "size": 4,
+  "alts": [
+   "img/food/manchego-2.webp",
+   "img/food/manchego-1.webp"
+  ]
  },
  "Gouda": {
-  "img": null,
-  "size": 4
+  "img": "img/food/gouda-1.webp",
+  "size": 4,
+  "alts": [
+   "img/food/gouda-1.webp",
+   "img/food/gouda-2.webp"
+  ]
  },
  "Gorgonzola": {
   "img": null,
   "size": 3.5
  },
  "Goat Cheese": {
-  "img": null,
+  "img": "img/food/goat-cheese.webp",
   "size": 4
  },
  "Gruyere": {
@@ -66,43 +87,55 @@ var FOOD = {
   "size": 3.5
  },
  "Grapes": {
-  "img": null,
-  "size": 5.5
+  "img": "img/food/red-grapes.webp",
+  "size": 5.5,
+  "alts": [
+   "img/food/red-grapes.webp",
+   "img/food/green-grapes.webp"
+  ]
  },
  "Strawberries": {
-  "img": null,
-  "size": 3.5
+  "img": "img/food/strawberries-1.webp",
+  "size": 3.5,
+  "alts": [
+   "img/food/strawberries-1.webp",
+   "img/food/strawberries-2.webp"
+  ]
  },
  "Blackberries": {
-  "img": null,
+  "img": "img/food/blackberries.webp",
   "size": 3
  },
  "Raspberries": {
-  "img": null,
+  "img": "img/food/raspberries.webp",
   "size": 3
  },
  "Blueberries": {
-  "img": null,
+  "img": "img/food/blueberries.webp",
   "size": 3
  },
  "Figs": {
-  "img": null,
-  "size": 3
+  "img": "img/food/figs-2.webp",
+  "size": 3,
+  "alts": [
+   "img/food/figs-2.webp",
+   "img/food/figs-1.webp"
+  ]
  },
  "Mango": {
-  "img": null,
+  "img": "img/food/mango.webp",
   "size": 3.5
  },
  "Pineapple": {
-  "img": null,
+  "img": "img/food/pineapple.webp",
   "size": 4
  },
  "Blood Orange": {
-  "img": null,
+  "img": "img/food/orange.webp",
   "size": 3
  },
  "Clementines": {
-  "img": null,
+  "img": "img/food/orange-2.webp",
   "size": 3.5
  },
  "Seasonal Melon": {
@@ -110,31 +143,31 @@ var FOOD = {
   "size": 4.5
  },
  "Olives": {
-  "img": null,
+  "img": "img/food/olives.webp",
   "size": 3
  },
  "Cornichons": {
-  "img": null,
+  "img": "img/food/cornichons.webp",
   "size": 3
  },
  "Cherry tomatoes": {
-  "img": null,
+  "img": "img/food/cherry-tomatoes.webp",
   "size": 3
  },
  "Apple slices": {
-  "img": null,
+  "img": "img/food/apple.webp",
   "size": 3.5
  },
  "Pear": {
-  "img": null,
+  "img": "img/food/pear.webp",
   "size": 3.5
  },
  "Water crackers": {
-  "img": null,
+  "img": "img/food/crackers.webp",
   "size": 4
  },
  "Sourdough crisps": {
-  "img": null,
+  "img": "img/food/crackers-2.webp",
   "size": 4
  },
  "Rye crisps": {
@@ -142,7 +175,7 @@ var FOOD = {
   "size": 4
  },
  "Crostini": {
-  "img": null,
+  "img": "img/food/crackers-2.webp",
   "size": 4
  },
  "Fig crackers": {
@@ -154,15 +187,15 @@ var FOOD = {
   "size": 4
  },
  "Multigrain crackers": {
-  "img": null,
+  "img": "img/food/crackers.webp",
   "size": 4
  },
  "Honeycomb": {
-  "img": null,
+  "img": "img/food/honeycomb.webp",
   "size": 3
  },
  "Marcona almonds": {
-  "img": null,
+  "img": "img/food/almonds.webp",
   "size": 2.5
  },
  "Walnuts": {
@@ -170,19 +203,19 @@ var FOOD = {
   "size": 2.5
  },
  "Dark chocolate": {
-  "img": null,
+  "img": "img/food/dark-chocolate.webp",
   "size": 2.5
  },
  "Dried apricots": {
-  "img": null,
+  "img": "img/food/dried-apricots.webp",
   "size": 2.5
  },
  "Candied pecans": {
-  "img": null,
+  "img": "img/food/pecans.webp",
   "size": 2.5
  },
  "Pistachios": {
-  "img": null,
+  "img": "img/food/pistachios.webp",
   "size": 2.5
  },
  "Dijon mustard": {
@@ -190,23 +223,23 @@ var FOOD = {
   "size": 2.5
  },
  "Fig jam": {
-  "img": null,
+  "img": "img/food/jam-1.webp",
   "size": 2.5
  },
  "Strawberry jam": {
-  "img": null,
+  "img": "img/food/jam-1.webp",
   "size": 2.5
  },
  "Apricot jam": {
-  "img": null,
+  "img": "img/food/jam2.webp",
   "size": 2.5
  },
  "Hot honey": {
-  "img": null,
+  "img": "img/food/honey.webp",
   "size": 2.5
  },
  "Hummus": {
-  "img": null,
+  "img": "img/food/hummus.webp",
   "size": 3
  },
  "Pesto": {
@@ -214,15 +247,15 @@ var FOOD = {
   "size": 2.5
  },
  "Berry preserve": {
-  "img": null,
+  "img": "img/food/jam-1.webp",
   "size": 2.5
  },
  "Grainy mustard": {
-  "img": null,
+  "img": "img/food/grainy-mustard.webp",
   "size": 2.5
  },
  "Truffle honey": {
-  "img": null,
+  "img": "img/food/honey.webp",
   "size": 2.5
  },
  "Pate": {
@@ -256,7 +289,11 @@ var FOOD = {
  "Nduja": {
   "img": null,
   "size": 3
+ },
+ "Beef sticks": {
+  "img": "img/food/beef-sticks.webp",
+  "size": 5
  }
 };
 // Custom ingredients use the photo of a similar item from the same group.
-var CATEGORY_FALLBACK = {"meats": "Salami", "cheeses": "Gouda", "produce": "Grapes", "crackers": "Water crackers", "accents": "Walnuts", "spreads": "Fig jam", "specialty": "Pate"};
+var CATEGORY_FALLBACK = {"meats": "Salami", "cheeses": "Gouda", "produce": "Grapes", "crackers": "Water crackers", "accents": "Marcona almonds", "spreads": "Fig jam", "specialty": "Pate"};

@@ -31,7 +31,7 @@ var tierNotes = {
 var boardItemDefs = {
   meats: {
     label: "Cured Meats",
-    items: ["Prosciutto", "Salami", "Soppressata", "Coppa", "Bresaola", "Pepperoni", "Chorizo", "Mortadella"],
+    items: ["Prosciutto", "Salami", "Soppressata", "Coppa", "Bresaola", "Pepperoni", "Chorizo", "Mortadella", "Beef sticks"],
   },
   cheeses: {
     label: "Cheeses",
@@ -122,6 +122,7 @@ var foodIcons = {
 };
 var itemEmojis = {
   Prosciutto: "&#x1F969;",
+  "Beef sticks": "&#x1F356;",
   Salami: "&#x1F355;",
   Soppressata: "&#x1F336;",
   Chorizo: "&#x1F336;",

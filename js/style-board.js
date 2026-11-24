@@ -29,6 +29,13 @@ var StyleBoard = (function () {
   function foodFor(cat, item) {
     return FOOD[item] || FOOD[CATEGORY_FALLBACK[cat]] || { img: null, size: 3.5 };
   }
+  // pick one of a food's photos for this piece, the same one every time
+  function photoFor(f, id) {
+    if (!f.alts || !f.alts.length) return f.img;
+    var h = 0;
+    for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
+    return f.alts[Math.abs(h) % f.alts.length];
+  }
   function clampSize(v) {
     v = parseFloat(v);
     if (!isFinite(v)) return null;
@@ -176,7 +183,7 @@ var StyleBoard = (function () {
         : CustomFood.shapeHtml({ shape: "circle", color: "#E8DDD0", item: p.item }, sizePx);
     } else if (f.img) {
       d.innerHTML =
-        '<img src="' + f.img + '" alt="' + esc(p.item) + '" draggable="false" loading="lazy">';
+        '<img src="' + photoFor(f, p.uid) + '" alt="' + esc(p.item) + '" draggable="false" loading="lazy">';
     } else {
       // until a photo is added for this food, show its emoji at the same real-life size
       var ico = (typeof getEmoji === "function" ? getEmoji(p.cat, p.item) : "") || "";
