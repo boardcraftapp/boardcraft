@@ -12,6 +12,23 @@ var EXTRAS_PRICE = "$14.99";
 // Contact email shown in the footer (needed by Stripe). Empty until Lynn picks one.
 var CONTACT_EMAIL = "lynn@quinnandcogulfcoast.com";
 
+// Review mode: on a test copy (a Vercel branch preview, whose address contains "-git-"),
+// adding ?review=1 to the address unlocks every Extras feature so the whole app can be checked.
+// It never works on the live app. ?review=0 turns it off again.
+var REVIEW_MODE = (function () {
+  var preview = /-git-/.test(location.hostname) || location.hostname === "localhost";
+  if (!preview) return false;
+  var on = false;
+  try {
+    if (/[?&]review=1/.test(location.search)) localStorage.setItem("boardcraft:review", "1");
+    if (/[?&]review=0/.test(location.search)) localStorage.removeItem("boardcraft:review");
+    on = localStorage.getItem("boardcraft:review") === "1";
+  } catch (e) {
+    on = /[?&]review=1/.test(location.search);
+  }
+  return on;
+})();
+
 var Account = (function () {
   var KEY = "boardcraft:session";
   var session = null; // {access_token, refresh_token, expires_at, email}
@@ -124,7 +141,7 @@ var Account = (function () {
         return Store.get("hasExtras", false); // offline: trust the last answer
       })
       .then(function (yes) {
-        extras = yes === true;
+        extras = yes === true || REVIEW_MODE;
         Store.set("hasExtras", extras);
         notify();
         return extras;
@@ -134,7 +151,7 @@ var Account = (function () {
   return {
     init: function () {
       load();
-      extras = !!session && Store.get("hasExtras", false);
+      extras = REVIEW_MODE || (!!session && Store.get("hasExtras", false));
       var result = readLinkFromAddress();
       checkExtras();
       return result;
@@ -173,7 +190,7 @@ var Account = (function () {
     signOut: function () {
       var s = session;
       session = null;
-      extras = false;
+      extras = REVIEW_MODE;
       save();
       Store.set("hasExtras", false);
       notify();
@@ -198,6 +215,10 @@ var LOCKED_TABS = { visual: "the Style board", export: "Export & print" };
 function renderAccountBar() {
   var bar = document.getElementById("accountBar");
   if (!bar) return;
+  if (REVIEW_MODE) {
+    bar.innerHTML = '<span class="acct-badge">Review mode: all Extras unlocked</span>';
+    return;
+  }
   if (Account.signedIn()) {
     bar.innerHTML =
       '<span class="acct-email">' +
