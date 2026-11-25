@@ -105,9 +105,9 @@ var HOME_TILES = [
   { tab: "recipes", label: "Recipes", icon: "recipes", color: "berry" },
   { tab: "shop", label: "Shopping list", icon: "shop", color: "mint" },
   { tab: "cost", label: "Cost", icon: "cost", color: "ink" },
-  { soon: true, label: "Guests & RSVPs", icon: "guests" },
+  { tab: "guests", label: "Guests & RSVPs", icon: "guests", color: "sky" },
   { soon: true, label: "Inspiration", icon: "inspo" },
-  { tab: "tips", label: "Tips & ideas", icon: "tips", color: "sky" },
+  { tab: "tips", label: "Tips & ideas", icon: "tips", color: "coral" },
 ];
 
 function renderHome() {
@@ -146,6 +146,9 @@ function renderHome() {
   var tipText = String(tip.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
   if (!tipText && tip.pairings) tipText = tip.pairings.slice(0, 2).map(function (x) { return x.cheese + " with " + x.pair; }).join(". ") + ".";
 
+  var rs = Store.get("rsvpSummary", null);
+  var rsvpStat = rs && rs.total ? "<span>" + rs.people + " coming</span>" : "";
+
   el.innerHTML =
     '<p class="hello">Let\'s get this party planned!</p>' +
     '<section class="event">' +
@@ -153,7 +156,7 @@ function renderHome() {
     "<small>" + (others.length ? "Planning now" : "Your party") + "</small>" +
     '<h2 class="event-name">' + esc(p.name) + "</h2>" +
     '<div class="event-meta">' + (meta ? esc(meta) : "Add a date, time and location so we can count down with you.") + "</div>" +
-    '<div class="event-stats"><span>' + boardCount + " board item" + (boardCount === 1 ? "" : "s") + "</span><span>" + menuCount + " recipe" + (menuCount === 1 ? "" : "s") + " on the menu</span></div>" +
+    '<div class="event-stats"><span>' + boardCount + " board item" + (boardCount === 1 ? "" : "s") + "</span><span>" + menuCount + " recipe" + (menuCount === 1 ? "" : "s") + " on the menu</span>" + rsvpStat + "</div>" +
     '<div class="event-actions"><button class="pill-btn" onclick="openPartyForm(\'edit\')">' + icon("edit", 15) + " Edit details</button>" +
     '<button class="pill-btn" onclick="copyParty()">' + icon("copy", 15) + " Copy party" + (Account.hasExtras() ? "" : " " + icon("lock", 12)) + "</button></div>" +
     "</section>" +
@@ -172,8 +175,10 @@ function renderHome() {
     (Parties.canAddMore() ? "" : "<span>" + icon("lock", 11) + " Extras</span>") +
     "</button></div>" +
     '<h3 class="sec">Plan it</h3><div class="tiles">' + tiles + "</div>" +
-    '<h3 class="sec">Notes &amp; ideas</h3>' +
-    '<div class="card notes-card"><textarea id="partyNotes" rows="4" maxlength="5000" placeholder="Theme ideas, who\'s bringing what, things not to forget..."></textarea><p class="card-hint" style="margin:6px 0 0">Saved automatically for this party.</p></div>' +
+    '<div class="seg" role="tablist"><button id="segTodo" onclick="homePane(\'todo\')">To-do</button><button id="segNotes" onclick="homePane(\'notes\')">Notes &amp; ideas</button></div>' +
+    '<div class="card" id="todoPane"><div class="todo-add"><input type="text" id="todoText" maxlength="200" placeholder="Add a to-do, like &quot;Order the cake&quot;" onkeydown="if(event.key===\'Enter\')addTodo()">' +
+    '<input type="date" id="todoDue" aria-label="Due date (optional)"><button class="btn primary" style="padding:0.5rem 1.1rem" onclick="addTodo()">Add</button></div><div id="todoList"></div></div>' +
+    '<div class="card notes-card" id="notesPane"><textarea id="partyNotes" rows="4" maxlength="5000" placeholder="Theme ideas, who\'s bringing what, things not to forget..."></textarea><p class="card-hint" style="margin:6px 0 0">Saved automatically for this party.</p></div>' +
     '<div class="tip-box"><b>Tip of the day</b>' + esc(tipText) + ' <button class="acct-link" onclick="switchTab(\'tips\')">More tips</button>' +
     '<p style="margin-top:8px">From the blog: <a href="' + esc(post.url) + '" target="_blank" rel="noopener">' + esc(post.title) + " &rarr;</a></p></div>";
 
@@ -184,6 +189,69 @@ function renderHome() {
   });
   var label = document.getElementById("partyNow");
   if (label) label.textContent = p.name;
+  homePane(Store.get("homePane", "todo"));
+  renderTodos();
+}
+
+// ---------- to-do list (one per party) ----------
+function homePane(which) {
+  Store.set("homePane", which);
+  var todo = which !== "notes";
+  document.getElementById("todoPane").style.display = todo ? "" : "none";
+  document.getElementById("notesPane").style.display = todo ? "none" : "";
+  document.getElementById("segTodo").className = todo ? "on" : "";
+  document.getElementById("segNotes").className = todo ? "" : "on";
+}
+function todoList() {
+  var t = Store.get("todos", []);
+  return Array.isArray(t) ? t : [];
+}
+function addTodo() {
+  var input = document.getElementById("todoText");
+  var text = input.value.trim();
+  if (!text) { input.focus(); return; }
+  var list = todoList();
+  list.push({ id: Store.newId(), text: text.slice(0, 200), due: document.getElementById("todoDue").value || "", done: false });
+  Store.set("todos", list);
+  input.value = "";
+  document.getElementById("todoDue").value = "";
+  renderTodos();
+  input.focus();
+}
+function toggleTodo(id) {
+  var list = todoList();
+  list.forEach(function (t) { if (t.id === id) t.done = !t.done; });
+  Store.set("todos", list);
+  renderTodos();
+}
+function removeTodo(id) {
+  Store.set("todos", todoList().filter(function (t) { return t.id !== id; }));
+  renderTodos();
+}
+function renderTodos() {
+  var box = document.getElementById("todoList");
+  if (!box) return;
+  var list = todoList().slice().sort(function (a, b) {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    if (a.due && b.due) return a.due < b.due ? -1 : a.due > b.due ? 1 : 0;
+    return a.due ? -1 : b.due ? 1 : 0;
+  });
+  if (!list.length) {
+    box.innerHTML = '<p class="card-hint" style="margin:0">Nothing here yet. Add the jobs you don\'t want to forget, with a due date if it helps.</p>';
+    return;
+  }
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  box.innerHTML = list.map(function (t) {
+    var due = "";
+    if (t.due) {
+      var d = new Date(t.due + "T00:00:00");
+      var late = !t.done && d < today;
+      due = '<span class="todo-due' + (late ? " late" : "") + '">' + (late ? "Overdue · " : "Due ") + d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + "</span>";
+    }
+    return '<div class="todo-item' + (t.done ? " done" : "") + '"><input type="checkbox" aria-label="Done"' + (t.done ? " checked" : "") +
+      ' onchange="toggleTodo(\'' + esc(t.id) + '\')"><span class="todo-text">' + esc(t.text) + "</span>" + due +
+      '<button class="todo-del" aria-label="Remove" onclick="removeTodo(\'' + esc(t.id) + '\')">' + icon("trash", 15) + "</button></div>";
+  }).join("");
 }
 
 // ---------- party form (new / edit) ----------

@@ -458,6 +458,65 @@ body{font-size:15px;background:var(--cream)}
 .tip-blog{margin-top:0.6rem}
 .tip-blog a{color:var(--accent);font-weight:700}
 .tip-box a{color:var(--accent);font-weight:700}
+/* Guests */
+.c-coral{background:#ef6f5e}
+.rsvp-totals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:0.8rem}
+.tot{border-radius:16px;padding:10px 6px;text-align:center;color:#fff}
+.tot.c-lemon{color:var(--ink)}
+.tot b{display:block;font-size:1.5rem;font-weight:800;line-height:1.1}
+.tot span{font-size:0.72rem;font-weight:700}
+.invite-card{border:2px solid var(--tint-line)}
+.link-row{display:flex;gap:8px;align-items:center}
+.link-row input{flex:1;min-width:0;padding:0.55rem 0.7rem;border:1.5px solid var(--light);border-radius:12px;font:inherit;font-size:14px;color:var(--ink);background:var(--warm)}
+.guest-row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--light);border-radius:14px;padding:0.6rem 0.8rem;margin-bottom:8px}
+.guest-main{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;text-align:left;border:none;background:none;font:inherit;color:var(--ink);cursor:pointer;padding:0;overflow-wrap:anywhere}
+.guest-main b{font-weight:800}
+.guest-note{font-size:0.78rem;color:var(--accent);margin-top:2px}
+.pill{flex:0 0 auto;border-radius:999px;padding:3px 10px;font-size:0.75rem;font-weight:800;white-space:nowrap}
+.s-yes{background:#d8f4ec;color:#11705c}.s-maybe{background:#fff3c4;color:#7a5b00}.s-no{background:var(--tint);color:var(--accent)}.s-invited{background:#ece9fd;color:#5446b8}
+.updates-card{margin-top:1rem}
+/* RSVP page */
+body.rsvp-mode .app{display:none}
+.rsvp-view{max-width:520px;margin:0 auto;padding:1rem max(16px,env(safe-area-inset-right,0px)) 2rem max(16px,env(safe-area-inset-left,0px))}
+.rsvp-brand{text-align:center;margin:0.5rem 0 1rem}
+.small-logo{font-family:var(--f-display);font-size:1.5rem;color:var(--ink);position:relative;display:inline-block;padding-top:16px}
+.small-logo .logo-sun{width:24px;height:15px;right:-8px;top:0}
+.rsvp-card{background:#fff;border:1px solid var(--light);border-radius:24px;overflow:hidden}
+.rsvp-hero{background:var(--berry);color:#fff;padding:1.4rem 1.3rem 1.2rem}
+.rsvp-hero small{font-size:0.75rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;opacity:0.9}
+.rsvp-hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(1.8rem,8vw,2.4rem);line-height:1.1;margin:6px 0 8px;overflow-wrap:anywhere}
+.rsvp-hero p{display:flex;align-items:center;gap:6px;font-weight:700;margin-top:3px}
+.rsvp-msg{background:#eceaff;margin:1rem 1.2rem 0;border-radius:16px;padding:0.8rem 1rem;white-space:pre-wrap;line-height:1.5}
+.rsvp-form{padding:1rem 1.2rem 1.3rem}
+.rsvp-form h3{font-weight:800;font-size:1.1rem;margin-bottom:0.6rem}
+.rsvp-choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.rsvp-choice{border:2px solid var(--light);background:#fff;border-radius:16px;padding:0.8rem 0.3rem;font:inherit;font-weight:800;color:var(--ink);cursor:pointer}
+.rsvp-choice.on[data-v=yes]{background:var(--mint);border-color:var(--mint);color:#fff}
+.rsvp-choice.on[data-v=maybe]{background:var(--lemon);border-color:var(--lemon)}
+.rsvp-choice.on[data-v=no]{background:var(--berry);border-color:var(--berry);color:#fff}
+.rsvp-consent{margin:0.4rem 0;font-size:0.9rem}
+.rsvp-send{width:100%;padding:0.8rem;font-size:1rem;margin-top:0.4rem}
+.rsvp-thanks{padding:1.4rem 1.2rem;text-align:center}
+.rsvp-thanks h2{font-weight:800;font-size:1.3rem;margin-bottom:1rem}
+.rsvp-closed{padding:1.2rem}
+.rsvp-foot{text-align:center;font-size:0.8rem;color:var(--medium);margin-top:1rem;line-height:1.6}
+.rsvp-foot a{color:var(--accent);font-weight:700}
+/* To-do */
+.seg{display:inline-flex;background:var(--warm);border-radius:999px;padding:3px;gap:2px;margin:1.2rem 0 0.6rem}
+.seg button{border:none;background:none;font:inherit;font-weight:800;font-size:0.85rem;color:var(--medium);padding:0.4rem 0.9rem;border-radius:999px;cursor:pointer}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(31,26,46,0.1)}
+.todo-add{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0.6rem}
+.todo-add input[type=text]{flex:1;min-width:150px;padding:0.55rem 0.75rem;border:1.5px solid var(--light);border-radius:12px;font:inherit;font-size:16px}
+.todo-add input[type=date]{padding:0.45rem 0.5rem;border:1.5px solid var(--light);border-radius:12px;font:inherit;font-size:14px;color:var(--medium)}
+.todo-item{display:flex;align-items:center;gap:10px;padding:0.5rem 0.2rem;border-bottom:1px solid var(--light)}
+.todo-item:last-child{border-bottom:none}
+.todo-item input{width:20px;height:20px;accent-color:var(--mint);flex:0 0 auto}
+.todo-text{flex:1;min-width:0;overflow-wrap:anywhere}
+.todo-item.done .todo-text{text-decoration:line-through;color:var(--medium)}
+.todo-due{font-size:0.75rem;font-weight:700;color:var(--medium);white-space:nowrap}
+.todo-due.late{color:var(--accent)}
+.todo-del{border:none;background:none;color:var(--medium);cursor:pointer;padding:4px;display:inline-flex;border-radius:8px}
+.todo-del:hover{color:var(--accent);background:var(--warm)}
 .item-from{display:block;font-size:0.72rem;color:var(--medium)}
 @media (max-width:600px){
   .tabs{display:flex;grid-template-columns:none}
@@ -475,6 +534,7 @@ body{font-size:15px;background:var(--cream)}
 </style>
 </head>
 <body>
+<div id="rsvpView" class="rsvp-view" hidden></div>
 <div class="app">
   <header class="header">
     <div class="brand"><h1 class="logo">BoardCraft<span class="logo-sun" id="logoSun"></span></h1><p class="tagline">Plan the party. Craft the moment.</p></div>
@@ -487,6 +547,7 @@ body{font-size:15px;background:var(--cream)}
     <button class="tab" data-tab="board" onclick="switchTab('board')"><span class="tab-icon" data-icon="board"></span>Board</button>
     <button class="tab" data-tab="visual" onclick="switchTab('visual')"><span class="tab-icon" data-icon="style"></span>Style</button>
     <button class="tab" data-tab="recipes" onclick="switchTab('recipes')"><span class="tab-icon" data-icon="recipes"></span>Recipes</button>
+    <button class="tab" data-tab="guests" onclick="switchTab('guests')"><span class="tab-icon" data-icon="guests"></span>Guests</button>
     <button class="tab" data-tab="shop" onclick="switchTab('shop')"><span class="tab-icon" data-icon="shop"></span>Shopping</button>
     <button class="tab" data-tab="cost" onclick="switchTab('cost')"><span class="tab-icon" data-icon="cost"></span>Cost</button>
     <button class="tab" data-tab="flavor" onclick="switchTab('flavor')"><span class="tab-icon" data-icon="flavor"></span>Flavor</button>
@@ -497,6 +558,7 @@ body{font-size:15px;background:var(--cream)}
   </nav>
   <div id="home" class="panel active"></div>
   <div id="recipes" class="panel"><div id="recipesBody"></div></div>
+  <div id="guests" class="panel"><div id="guestsBody"></div></div>
   <div id="calc" class="panel">
     <div class="calc-grid">
       <div class="card"><h3>Guest count</h3><p class="card-hint">Type a number or use + and &minus;</p><div class="guest-control"><button class="guest-btn" onclick="adjustGuests(-1)">&#8722;</button><input class="guest-num" id="guestNum" type="number" inputmode="numeric" min="0" max="2000" value="0" aria-label="Number of guests" onchange="setGuests(this.value)" onfocus="this.select()"><button class="guest-btn" onclick="adjustGuests(1)">+</button></div></div>
@@ -665,6 +727,7 @@ body{font-size:15px;background:var(--cream)}
 <script src="js/account.js"></script>
 <script src="js/parties.js"></script>
 <script src="js/recipes.js"></script>
+<script src="js/guests.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

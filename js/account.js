@@ -169,6 +169,12 @@ var Account = (function () {
       return extras;
     },
     refresh: checkExtras,
+    // A fresh sign-in token for calls that need to know who the host is.
+    token: function () {
+      return refreshIfNeeded().then(function (s) {
+        return s ? s.access_token : null;
+      });
+    },
     sendLink: function (email) {
       var back = location.origin + location.pathname;
       return fetch(SUPABASE_URL + "/auth/v1/otp?redirect_to=" + encodeURIComponent(back), {

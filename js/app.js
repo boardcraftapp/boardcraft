@@ -55,6 +55,7 @@ function switchTab(t) {
   if (t === "visual") StyleBoard.render();
   if (t === "home") renderHome();
   if (t === "recipes") renderRecipes();
+  if (t === "guests") loadGuests();
   if (t === "shop") renderMenuShopList();
   if (t === "community") {
     updateShareCount();
@@ -1024,6 +1025,9 @@ function toggleTip(i) {
 
 // ---------- start-up ----------
 (function init() {
+  if (RSVP_TOKEN) {
+    document.getElementById("rsvpView").hidden = false;
+  }
   document.querySelectorAll("[data-icon]").forEach(function (el) {
     el.innerHTML = icon(el.getAttribute("data-icon"), 20);
   });
@@ -1047,6 +1051,7 @@ function toggleTip(i) {
     renderHome();
     renderRecipes();
     renderMenuShopList();
+    if (Store.get("tab") === "guests") loadGuests();
   });
   renderAccountBar();
   renderLocks();
@@ -1060,6 +1065,10 @@ function toggleTip(i) {
     try {
       history.replaceState(null, "", location.pathname + location.hash);
     } catch (e) {}
+  }
+  if (RSVP_TOKEN) {
+    startRsvpPage();
+    return;
   }
   switchTab(Store.get("tab", "home"));
 })();
