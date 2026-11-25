@@ -1015,6 +1015,12 @@ function toggleTip(i) {
   renderLocks();
   if (link && link.signedIn) toast("You're signed in. Welcome!");
   if (link && link.error) toast("That sign-in link didn't work (" + link.error + "). Please request a new one.");
+  if (/[?&]paid=1/.test(location.search)) {
+    toast("Thank you for buying BoardCraft Extras! Sign in with the email you paid with. We'll unlock your Extras shortly.");
+    try {
+      history.replaceState(null, "", location.pathname + location.hash);
+    } catch (e) {}
+  }
   var tab = Store.get("tab", "calc");
   if (tab !== "calc" && document.getElementById(tab)) switchTab(tab);
 })();
