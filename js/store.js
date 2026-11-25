@@ -14,7 +14,6 @@ var Store = (function () {
     likedPosts: 1,
     hasExtras: 1,
     tab: 1,
-    costArea: 1,
   };
   var data = {};
   try {

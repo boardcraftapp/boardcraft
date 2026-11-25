@@ -557,19 +557,7 @@ function getPrices() {
     });
     return p;
   }
-  var base = tierPrices[costTier] || tierPrices.mid;
-  var f = AREA_FACTORS[Store.get("costArea", "avg")] || 1;
-  var out = {};
-  Object.keys(base).forEach(function (k) {
-    out[k] = Math.round(base[k] * f * 2) / 2;
-  });
-  return out;
-}
-// A rough nudge for local grocery prices: about 10% under or 15% over the national average.
-var AREA_FACTORS = { lower: 0.9, avg: 1, higher: 1.15 };
-function setArea(a) {
-  Store.set("costArea", a);
-  renderCostRows();
+  return tierPrices[costTier] || tierPrices.mid;
 }
 function specialtyCount() {
   var n = Object.values(boardSelected).filter(function (o) {
@@ -608,11 +596,7 @@ function renderCostRows() {
   document.querySelectorAll(".tier-btn[data-tier]").forEach(function (b) {
     b.classList.toggle("active", b.getAttribute("data-tier") === costTier);
   });
-  var area = Store.get("costArea", "avg");
-  document.querySelectorAll(".tier-btn[data-area]").forEach(function (b) {
-    b.classList.toggle("active", b.getAttribute("data-area") === area);
-    b.disabled = costTier === "custom";
-  });
+
   document.getElementById("costRows").innerHTML = COST_LINES.map(function (l) {
     return (
       '<div class="cost-row"><label>' +
@@ -633,6 +617,7 @@ function renderCostRows() {
     );
   }).join("");
   document.getElementById("costNote").textContent =
+    "Prices are based on U.S. national averages. Prices near you may be different: choose Custom to type in your own. " +
     (tierNotes[costTier] || "") +
     (c.qty.specialty ? "" : " Specialty items are only counted when you pick some in the Board tab.") +
     " A box of crackers is about " +
@@ -983,12 +968,25 @@ function printExport() {
   w.document.close();
   w.print();
 }
+function blogCardHtml(post) {
+  var pic = post.img
+    ? '<img src="' + esc(post.img) + '" alt="" loading="lazy" onerror="this.remove()">'
+    : "";
+  return (
+    '<a class="blog-card" href="' + esc(post.url) + '" target="_blank" rel="noopener"><span class="blog-pic" style="background:' + post.color + '">' + pic + "</span>" +
+    "<b>" + esc(post.title) + '</b><span class="blog-sum">' + esc(post.summary) + '</span><span class="blog-read">Read on the blog &rarr;</span></a>'
+  );
+}
 function initTips() {
+  var blog = document.getElementById("blogRow");
+  if (blog) blog.innerHTML = blogPosts.map(blogCardHtml).join("");
   var grid = document.getElementById("tipsGrid");
   tips.forEach(function (tip, i) {
     var card = document.createElement("div");
     card.className = "tip-card";
     var body = tip.content;
+    if (tip.blog !== undefined && blogPosts[tip.blog])
+      body += '<p class="tip-blog"><a href="' + esc(blogPosts[tip.blog].url) + '" target="_blank" rel="noopener">Read more: ' + esc(blogPosts[tip.blog].title) + " &rarr;</a></p>";
     if (tip.pairings)
       body +=
         '<div class="pairing-grid">' +

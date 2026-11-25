@@ -142,6 +142,7 @@ function renderHome() {
   }).join("");
 
   var tip = tips[new Date().getDate() % tips.length];
+  var post = blogPosts[tip.blog !== undefined ? tip.blog : new Date().getDate() % blogPosts.length];
   var tipText = String(tip.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
   if (!tipText && tip.pairings) tipText = tip.pairings.slice(0, 2).map(function (x) { return x.cheese + " with " + x.pair; }).join(". ") + ".";
 
@@ -173,7 +174,8 @@ function renderHome() {
     '<h3 class="sec">Plan it</h3><div class="tiles">' + tiles + "</div>" +
     '<h3 class="sec">Notes &amp; ideas</h3>' +
     '<div class="card notes-card"><textarea id="partyNotes" rows="4" maxlength="5000" placeholder="Theme ideas, who\'s bringing what, things not to forget..."></textarea><p class="card-hint" style="margin:6px 0 0">Saved automatically for this party.</p></div>' +
-    '<div class="tip-box"><b>Tip of the day</b>' + esc(tipText) + ' <button class="acct-link" onclick="switchTab(\'tips\')">More tips</button></div>';
+    '<div class="tip-box"><b>Tip of the day</b>' + esc(tipText) + ' <button class="acct-link" onclick="switchTab(\'tips\')">More tips</button>' +
+    '<p style="margin-top:8px">From the blog: <a href="' + esc(post.url) + '" target="_blank" rel="noopener">' + esc(post.title) + " &rarr;</a></p></div>";
 
   var notes = document.getElementById("partyNotes");
   notes.value = Store.get("notes", "");
