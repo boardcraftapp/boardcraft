@@ -1006,6 +1006,15 @@ function toggleTip(i) {
   renderGeneralList();
   initTools();
   initTips();
+  var link = Account.init();
+  Account.onChange(function () {
+    renderAccountBar();
+    renderLocks();
+  });
+  renderAccountBar();
+  renderLocks();
+  if (link && link.signedIn) toast("You're signed in. Welcome!");
+  if (link && link.error) toast("That sign-in link didn't work (" + link.error + "). Please request a new one.");
   var tab = Store.get("tab", "calc");
   if (tab !== "calc" && document.getElementById(tab)) switchTab(tab);
 })();
