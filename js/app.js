@@ -40,9 +40,11 @@ function toast(msg) {
 }
 
 function switchTab(t) {
-  var n = ["calc", "board", "visual", "community", "shop", "cost", "flavor", "tools", "export", "tips"];
-  document.querySelectorAll(".tab").forEach(function (el, i) {
-    el.classList.toggle("active", n[i] === t);
+  if (!document.getElementById(t)) t = "home";
+  document.querySelectorAll(".tab").forEach(function (el) {
+    var on = el.getAttribute("data-tab") === t;
+    el.classList.toggle("active", on);
+    if (on && el.scrollIntoView) el.scrollIntoView({ block: "nearest", inline: "center" });
   });
   document.querySelectorAll(".panel").forEach(function (p) {
     p.classList.toggle("active", p.id === t);
@@ -51,6 +53,9 @@ function switchTab(t) {
   if (t === "cost") renderCostRows();
   if (t === "export") buildExport();
   if (t === "visual") StyleBoard.render();
+  if (t === "home") renderHome();
+  if (t === "recipes") renderRecipes();
+  if (t === "shop") renderMenuShopList();
   if (t === "community") {
     updateShareCount();
     loadCommunity();
@@ -69,6 +74,7 @@ function setGuests(n) {
   if (input && Number(input.value) !== n) input.value = n;
   Store.set("guests", guests);
   updateCalc();
+  renderMenuShopList();
 }
 function adjustGuests(d) {
   setGuests(guests + d);
@@ -285,11 +291,11 @@ var communityLoaded = false,
   communityError = false;
 var likedPosts = Store.get("likedPosts", {});
 var pendingPhoto = null;
-var AVATAR_COLORS = ["#9B4A1F", "#374A8B", "#4A6741", "#7B3FA0", "#2A7A6A", "#C17A3A"];
+var AVATAR_COLORS = ["#d63c74", "#7a6ae0", "#1f9e83", "#e0701f", "#1f1a2e", "#b8860b"];
 var OCCASION_STYLE = {
   "Holiday gathering": { emoji: "&#127876;", bg: "linear-gradient(135deg,#1a4a2e,#2d6b45)" },
   "Date night": { emoji: "&#128329;", bg: "linear-gradient(135deg,#2c1a3a,#4a2d6b)" },
-  "Everyday grazing": { emoji: "&#9728;", bg: "linear-gradient(135deg,#C17A3A,#E0A85A)" },
+  "Everyday grazing": { emoji: "&#9728;", bg: "linear-gradient(135deg,#ff8a3d,#ffd23f)" },
   "Wedding / event": { emoji: "&#128141;", bg: "linear-gradient(135deg,#8B6914,#C9A44A)" },
 };
 
@@ -437,7 +443,7 @@ function renderCommunity() {
       if (items.length > 3) tags += '<span class="community-tag">+' + (items.length - 3) + " more</span>";
       var handle = p.handle || "Anonymous";
       var initials = esc(handle.replace("@", "").substring(0, 2).toUpperCase());
-      var style = OCCASION_STYLE[p.occasion] || { emoji: "&#129472;", bg: "linear-gradient(135deg,#9B4A1F,#C17A3A)" };
+      var style = OCCASION_STYLE[p.occasion] || { emoji: "&#129472;", bg: "linear-gradient(135deg,#d63c74,#ff8a3d)" };
       var pic = p.photo_url
         ? '<img src="' + esc(p.photo_url) + '" alt="' + esc(p.title) + '" loading="lazy">'
         : '<span style="font-size:3rem">' + style.emoji + "</span>";
@@ -754,10 +760,12 @@ function renderGeneralList() {
 }
 function updateShopStats() {
   var all = Object.values(shopItems).concat(Object.values(generalItems));
-  document.getElementById("totalItems").textContent = all.length;
-  document.getElementById("checkedItems").textContent = all.filter(function (i) {
-    return i.checked;
-  }).length;
+  var m = menuCounts();
+  document.getElementById("totalItems").textContent = all.length + m.total;
+  document.getElementById("checkedItems").textContent =
+    all.filter(function (i) {
+      return i.checked;
+    }).length + m.checked;
 }
 function updateFlavor() {
   var selected = Object.values(boardSelected);
@@ -844,8 +852,10 @@ function initTools() {
   });
 }
 function buildExport() {
-  var name = document.getElementById("eventName").value || "Charcuterie Board";
-  var date = document.getElementById("eventDate").value || new Date().toLocaleDateString();
+  var party = Parties.active();
+  var name = party.name || "My party";
+  var pd = partyDate(party);
+  var date = (pd ? pd.toLocaleDateString() : "Date to be set") + (party.time ? " at " + fmtTime(party.time) : "");
   var q = getQuantities();
   var selected = Object.values(boardSelected);
   var cost = computeCost();
@@ -864,7 +874,7 @@ function buildExport() {
     specialty: "Specialty Items",
   };
   var out =
-    "BOARDCRAFT - " +
+    "BOARDCRAFT · " +
     name.toUpperCase() +
     "\nDate: " +
     date +
@@ -899,9 +909,20 @@ function buildExport() {
     (total / guests).toFixed(2) +
     "  |  With buffer: $" +
     (total * 1.15).toFixed(2) +
-    "\n\nSHOPPING LIST\n";
+    "\n";
+  var menu = getMenu();
+  if (menu.length) {
+    out += "\nMENU\n";
+    menu.forEach(function (e) {
+      out += "- " + Recipes.find(e.rid).name + "\n";
+    });
+  }
+  out += "\nSHOPPING LIST\n";
   Object.values(shopItems).forEach(function (i) {
     out += "[ ] " + i.name + "\n";
+  });
+  menuIngredients().forEach(function (i) {
+    out += "[ ] " + (i.amount ? i.amount + " " : "") + i.name + "\n";
   });
   var gen = Object.values(generalItems);
   if (gen.length) {
@@ -910,7 +931,7 @@ function buildExport() {
       out += "[ ] " + i.name + "\n";
     });
   }
-  out += "\n- Generated by Boardcraft\n- Supplies: quinnandcogulfcoast.com/shop";
+  out += "\nPlanned with BoardCraft by Quinn & Co. Gather Beautifully.\nquinnandcogulfcoast.com";
   document.getElementById("exportPreview").textContent = out;
 }
 function copyExport() {
@@ -938,7 +959,7 @@ function printExport() {
   var text = document.getElementById("exportPreview").textContent;
   var w = window.open("", "_blank");
   w.document.write(
-    "<html><head><title>Boardcraft Export</title><style>body{font-family:monospace;padding:2rem;white-space:pre-wrap;font-size:14px;color:#2A1F14}</style></head><body>" +
+    "<html><head><title>BoardCraft</title><style>body{font-family:monospace;padding:2rem;white-space:pre-wrap;font-size:14px;color:#1f1a2e}</style></head><body>" +
       esc(text) +
       "</body></html>",
   );
@@ -988,16 +1009,14 @@ function toggleTip(i) {
 
 // ---------- start-up ----------
 (function init() {
+  document.querySelectorAll("[data-icon]").forEach(function (el) {
+    el.innerHTML = icon(el.getAttribute("data-icon"), 20);
+  });
+  document.getElementById("logoSun").innerHTML = SUN_SVG;
+  document.getElementById("footSun").innerHTML = SUN_SVG;
   document.getElementById("guestNum").value = guests;
   document.querySelectorAll(".meal-btn").forEach(function (b) {
     b.classList.toggle("active", b.getAttribute("data-meal") === mealType);
-  });
-  ["eventName", "eventDate"].forEach(function (id) {
-    var el = document.getElementById(id);
-    el.value = Store.get(id, "");
-    el.addEventListener("input", function () {
-      Store.set(id, el.value);
-    });
   });
   updateCalc();
   initBoard();
@@ -1010,9 +1029,15 @@ function toggleTip(i) {
   Account.onChange(function () {
     renderAccountBar();
     renderLocks();
+    renderHome();
+    renderRecipes();
+    renderMenuShopList();
   });
   renderAccountBar();
   renderLocks();
+  renderHome();
+  renderRecipes();
+  renderMenuShopList();
   if (link && link.signedIn) toast("You're signed in. Welcome!");
   if (link && link.error) toast("That sign-in link didn't work (" + link.error + "). Please request a new one.");
   if (/[?&]paid=1/.test(location.search)) {
@@ -1021,6 +1046,5 @@ function toggleTip(i) {
       history.replaceState(null, "", location.pathname + location.hash);
     } catch (e) {}
   }
-  var tab = Store.get("tab", "calc");
-  if (tab !== "calc" && document.getElementById(tab)) switchTab(tab);
+  switchTab(Store.get("tab", "home"));
 })();

@@ -1,12 +1,14 @@
 // Sign-in and BoardCraft Extras.
 // People sign in with an emailed link (no passwords), using Supabase Auth.
-// Extras ($9.99, one-time) unlock the Style board, Export & print, and sharing to Community.
+// Extras ($14.99, one-time) unlock unlimited parties and recipes, recipe scaling, the Style board,
+// Export & print, and sharing to Community.
 // Who has Extras is decided in the database (table extras_buyers, checked by has_extras()),
 // so it can't be switched on from the browser.
 
 // Paste the Stripe Payment Link here once it exists (starts with https://buy.stripe.com/).
 var EXTRAS_PAYMENT_LINK = "https://buy.stripe.com/14AfZh4nMg287Wu4CJ7ss00";
-var EXTRAS_PRICE = "$9.99";
+// NOTE: the Stripe payment link above still charges $9.99. Update the price in Stripe before launch.
+var EXTRAS_PRICE = "$14.99";
 // Contact email shown in the footer (needed by Stripe). Empty until Lynn picks one.
 var CONTACT_EMAIL = "lynn@quinnandcogulfcoast.com";
 
@@ -245,13 +247,13 @@ function paywallHtml(what) {
       '. Already paid? <button class="acct-link" onclick="checkExtrasNow()">Check again</button></p>'
     : '<p class="paywall-small">Already have Extras? <button class="acct-link" onclick="openSignIn()">Sign in</button></p>';
   return (
-    '<div class="paywall-card"><div class="paywall-icon">&#128274;</div>' +
+    '<div class="paywall-card"><div class="paywall-icon">' + SUN_SVG + "</div>" +
     "<h3>" +
     esc(what.charAt(0).toUpperCase() + what.slice(1)) +
     " is part of BoardCraft Extras</h3>" +
     "<p>One payment of <strong>" +
     EXTRAS_PRICE +
-    "</strong>, yours to keep. Unlocks the Style board with real food photos, Export &amp; print, and sharing your boards to Community.</p>" +
+    "</strong>, yours to keep. Unlocks unlimited parties and recipes, scaling recipes to your guest count, copying a party, the Style board with real food photos, Export &amp; print, and sharing your boards to Community.</p>" +
     '<div class="paywall-actions">' +
     buy +
     "</div>" +
