@@ -8,7 +8,7 @@
 var EXTRAS_PAYMENT_LINK = "https://buy.stripe.com/14AfZh4nMg287Wu4CJ7ss00";
 var EXTRAS_PRICE = "$9.99";
 // Contact email shown in the footer (needed by Stripe). Empty until Lynn picks one.
-var CONTACT_EMAIL = "";
+var CONTACT_EMAIL = "lynn@quinnandcogulfcoast.com";
 
 var Account = (function () {
   var KEY = "boardcraft:session";
