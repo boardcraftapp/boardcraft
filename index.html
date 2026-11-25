@@ -147,9 +147,9 @@ body{font-family:var(--f-body);background:var(--cream);color:var(--dark);min-hei
 .tool-desc{font-size:0.75rem;color:var(--medium);line-height:1.5;flex:1}
 .tool-link{display:inline-block;padding:0.4rem 0.85rem;border-radius:8px;background:var(--accent);color:white;font-size:0.73rem;font-weight:500;text-align:center;cursor:pointer;border:none;font-family:var(--f-body);transition:background 0.15s}
 .tool-link:hover{background:#a8285a}
-.shop-banner{background:linear-gradient(135deg,var(--berry),var(--tangerine));border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.shop-banner-text h3{color:white;font-family:var(--f-display);font-size:1.1rem;font-style:italic;margin-bottom:4px}
-.shop-banner-text p{color:rgba(255,255,255,0.85);font-size:0.78rem}
+.shop-banner{background:linear-gradient(135deg,#c8326b,#e8692a);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.shop-banner-text h3{color:#fff;font-family:var(--f-body);font-weight:800;font-size:1.25rem;font-style:normal;letter-spacing:0.01em;margin-bottom:4px;text-shadow:0 1px 2px rgba(90,20,40,0.25)}
+.shop-banner-text p{color:#fff;font-size:0.9rem;font-weight:600}
 .shop-banner-btn{padding:0.55rem 1.2rem;border-radius:8px;background:white;color:var(--accent);font-size:0.82rem;font-weight:500;cursor:pointer;border:none;font-family:var(--f-body);white-space:nowrap}
 .btn{padding:0.55rem 0.9rem;border-radius:8px;border:1.5px solid var(--light);background:white;cursor:pointer;font-family:var(--f-body);font-size:0.8rem;font-weight:500;color:var(--medium);transition:all 0.15s}
 .btn:hover{background:var(--warm);border-color:var(--accent2);color:var(--accent)}
@@ -332,8 +332,8 @@ button:disabled{opacity:0.6;cursor:wait}
 body{font-size:15px;background:var(--cream)}
 .app{max-width:860px;padding:0 max(16px,env(safe-area-inset-right,0px)) 1.5rem max(16px,env(safe-area-inset-left,0px))}
 .header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;text-align:left;padding:1.4rem 0 0.6rem;border-bottom:none;margin-bottom:0;flex-wrap:wrap}
-.logo{font-family:var(--f-display);font-weight:400;font-size:clamp(2rem,7vw,2.6rem);line-height:1;color:var(--ink);position:relative;display:inline-block;padding-top:16px;letter-spacing:0}
-.logo-sun{position:absolute;right:-12px;top:-4px;width:44px;height:28px}
+.logo{font-family:var(--f-display);font-weight:400;font-size:clamp(2rem,7vw,2.6rem);line-height:1;color:var(--ink);position:relative;display:inline-block;padding-top:30px;letter-spacing:0}
+.logo-sun{position:absolute;right:-10px;top:0;width:40px;height:25px}
 .logo-sun .sun,.byqc .sun{width:100%;height:100%;display:block}
 .header .tagline{text-transform:none;letter-spacing:0;font-weight:800;color:var(--ink);font-size:1rem;margin-top:6px;letter-spacing:0;text-transform:none}
 .account-bar{position:static;font-size:0.8rem;padding-bottom:4px}
@@ -444,6 +444,8 @@ body{font-size:15px;background:var(--cream)}
 .empty-recipes p{color:var(--medium);line-height:1.55}
 .recipe-form textarea{font-size:16px}
 .share-form-row input,.share-form-row textarea,.share-form-row select{font-size:16px;border-radius:12px}
+.recipe-times{font-weight:700;color:var(--accent);margin-bottom:0.4rem}
+.share-form-row select{appearance:auto}
 .item-from{display:block;font-size:0.72rem;color:var(--medium)}
 @media (max-width:600px){
   .tabs{display:flex;grid-template-columns:none}
@@ -485,7 +487,7 @@ body{font-size:15px;background:var(--cream)}
   <div id="recipes" class="panel"><div id="recipesBody"></div></div>
   <div id="calc" class="panel">
     <div class="calc-grid">
-      <div class="card"><h3>Guest count</h3><p class="card-hint">Type a number or use + and &minus;</p><div class="guest-control"><button class="guest-btn" onclick="adjustGuests(-1)">&#8722;</button><input class="guest-num" id="guestNum" type="number" inputmode="numeric" min="1" max="2000" value="12" aria-label="Number of guests" onchange="setGuests(this.value)" onfocus="this.select()"><button class="guest-btn" onclick="adjustGuests(1)">+</button></div></div>
+      <div class="card"><h3>Guest count</h3><p class="card-hint">Type a number or use + and &minus;</p><div class="guest-control"><button class="guest-btn" onclick="adjustGuests(-1)">&#8722;</button><input class="guest-num" id="guestNum" type="number" inputmode="numeric" min="0" max="2000" value="0" aria-label="Number of guests" onchange="setGuests(this.value)" onfocus="this.select()"><button class="guest-btn" onclick="adjustGuests(1)">+</button></div></div>
       <div class="card"><h3>Occasion type</h3><div class="meal-type" style="margin-top:0.4rem"><button class="meal-btn active" data-meal="appetizer" onclick="setMeal('appetizer',this)">Appetizer</button><button class="meal-btn" data-meal="main" onclick="setMeal('main',this)">Main event</button><button class="meal-btn" data-meal="grazing" onclick="setMeal('grazing',this)">All-day graze</button></div></div>
       <div class="card full-card"><div class="mix-head"><h3>Mix preferences</h3><button class="btn sm" onclick="resetMix()">Reset to balanced</button></div><p class="card-hint">How the food is split. Always adds up to 100%.</p>
         <div class="range-row"><label>Meat-forward</label><input type="range" min="0" max="100" value="25" step="1" id="meatSlider" oninput="setMix('meat',this.value)"><span id="meatPct">40%</span></div>
@@ -571,6 +573,9 @@ body{font-size:15px;background:var(--cream)}
   <div id="cost" class="panel">
     <div class="cost-section"><h3>Budget tier</h3>
       <div class="tier-bar"><button class="tier-btn" data-tier="budget" onclick="setTier('budget',this)">Budget</button><button class="tier-btn active" data-tier="mid" onclick="setTier('mid',this)">Mid-range</button><button class="tier-btn" data-tier="premium" onclick="setTier('premium',this)">Premium</button><button class="tier-btn" data-tier="custom" onclick="setTier('custom',this)">Custom</button></div>
+      <h3 style="margin-bottom:0.5rem">Your area</h3>
+      <div class="tier-bar" id="areaBar"><button class="tier-btn" data-area="lower" onclick="setArea('lower')">Lower cost</button><button class="tier-btn" data-area="avg" onclick="setArea('avg')">About average</button><button class="tier-btn" data-area="higher" onclick="setArea('higher')">Higher cost</button></div>
+      <p class="card-hint" style="margin:-0.4rem 0 0.9rem">Prices are based on U.S. national averages. Grocery prices vary a lot by state and store, so pick your area, or choose Custom above and type in what things cost near you.</p>
       <h3 style="margin-bottom:0.7rem">Prices</h3>
       <div id="costRows"></div><div class="cost-summary" id="costSummary"></div>
     </div>
@@ -581,7 +586,7 @@ body{font-size:15px;background:var(--cream)}
     <div class="card"><h3>Suggested additions to balance</h3><div id="balanceSuggestions" style="font-size:0.82rem;color:var(--medium);line-height:1.7"></div></div>
   </div>
   <div id="tools" class="panel">
-    <div class="shop-banner"><div class="shop-banner-text"><h3>Quinn &amp; Co Gulf Coast</h3><p>Everything you need for the perfect board</p></div><button class="shop-banner-btn" onclick="window.open('https://quinnandcogulfcoast.com/shop','_blank')">Visit the shop &rarr;</button></div>
+    <div class="shop-banner"><div class="shop-banner-text"><h3>Quinn &amp; Co. Events</h3><p>Everything you need for the perfect board</p></div><button class="shop-banner-btn" onclick="window.open('https://quinnandcogulfcoast.com/shop','_blank')">Visit the shop &rarr;</button></div>
     <p class="affiliate-note">As an Amazon Associate I earn from qualifying purchases.</p>
     <div class="tools-grid" id="toolsGrid"></div>
   </div>
@@ -597,7 +602,7 @@ body{font-size:15px;background:var(--cream)}
   <footer class="site-footer">
     <p class="byqc"><span id="footSun"></span>by Quinn &amp; Co. · <span class="gather">Gather Beautifully.</span></p>
     <p>Questions or help: <a id="contactLink" href="#">contact us</a></p>
-    <p style="margin-top:4px">BoardCraft Extras is a one-time $14.99 purchase. If it isn't right for you, email us within 14 days for a full refund.</p>
+    <p style="margin-top:4px">BoardCraft Extras is a one-time $14.99 purchase. If it isn't right for you, email us within 7 days for a full refund.</p>
   </footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -624,9 +629,9 @@ body{font-size:15px;background:var(--cream)}
     <form onsubmit="return savePartyForm(event)">
       <h3 id="partyFormTitle">Party details</h3>
       <div class="share-form-row"><label for="pfName">Party name</label><input id="pfName" maxlength="60" placeholder="e.g. Friendsgiving" autocomplete="off"></div>
-      <div class="form-2"><div class="share-form-row"><label for="pfDate">Date</label><input id="pfDate" type="date"></div><div class="share-form-row"><label for="pfTime">Start time</label><input id="pfTime" type="time"></div></div>
-      <div class="share-form-row"><label for="pfPlace">Place</label><input id="pfPlace" maxlength="80" placeholder="e.g. Our backyard"></div>
-      <div class="share-form-row"><label for="pfGuests">How many guests?</label><input id="pfGuests" type="number" inputmode="numeric" min="1" max="2000" style="width:110px"></div>
+      <div class="form-2"><div class="share-form-row"><label for="pfDate">Date</label><input id="pfDate" type="date"></div><div class="share-form-row"><label for="pfTime">Start time</label><select id="pfTime"></select></div></div>
+      <div class="share-form-row"><label for="pfPlace">Location</label><input id="pfPlace" maxlength="80" placeholder="e.g. Our backyard"></div>
+      <div class="share-form-row"><label for="pfGuests">How many guests?</label><input id="pfGuests" type="number" inputmode="numeric" min="0" max="2000" style="width:110px"></div>
       <button class="btn primary" type="submit">Save</button>
       <div id="pfDeleteRow" class="pf-delete"><button type="button" class="btn danger-link" onclick="askDeleteParty()">Delete this party</button>
         <div id="pfConfirm" style="display:none">This removes the party's board, menu, shopping list and notes. Your saved recipes stay. <button type="button" class="btn sm danger" onclick="deleteParty()">Yes, delete it</button></div></div>

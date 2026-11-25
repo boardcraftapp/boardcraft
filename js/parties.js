@@ -1,4 +1,4 @@
-// Parties: each party has its own details (name, date, time, place, guests) and its own
+// Parties: each party has its own details (name, date, time, location, guests) and its own
 // board, shopping list, menu and notes. The Home tab shows the open party and everything you can plan for it.
 var FREE_PARTY_LIMIT = 1;
 
@@ -151,7 +151,7 @@ function renderHome() {
     countdown +
     "<small>" + (others.length ? "Planning now" : "Your party") + "</small>" +
     '<h2 class="event-name">' + esc(p.name) + "</h2>" +
-    '<div class="event-meta">' + (meta ? esc(meta) : "Add a date, time and place so we can count down with you.") + "</div>" +
+    '<div class="event-meta">' + (meta ? esc(meta) : "Add a date, time and location so we can count down with you.") + "</div>" +
     '<div class="event-stats"><span>' + boardCount + " board item" + (boardCount === 1 ? "" : "s") + "</span><span>" + menuCount + " recipe" + (menuCount === 1 ? "" : "s") + " on the menu</span></div>" +
     '<div class="event-actions"><button class="pill-btn" onclick="openPartyForm(\'edit\')">' + icon("edit", 15) + " Edit details</button>" +
     '<button class="pill-btn" onclick="copyParty()">' + icon("copy", 15) + " Copy party" + (Account.hasExtras() ? "" : " " + icon("lock", 12)) + "</button></div>" +
@@ -192,15 +192,30 @@ function openPartyForm(mode) {
   document.getElementById("partyFormTitle").textContent = mode === "edit" ? "Party details" : "New party";
   document.getElementById("pfName").value = p.name || "";
   document.getElementById("pfDate").value = p.date || "";
+  fillTimes();
   document.getElementById("pfTime").value = p.time || "";
   document.getElementById("pfPlace").value = p.place || "";
-  document.getElementById("pfGuests").value = mode === "edit" ? guests : 12;
+  document.getElementById("pfGuests").value = mode === "edit" ? guests : 0;
   document.getElementById("pfDeleteRow").style.display = mode === "edit" ? "" : "none";
   document.getElementById("pfConfirm").style.display = "none";
   document.getElementById("partyModal").classList.add("open");
   setTimeout(function () {
     document.getElementById("pfName").focus();
   }, 50);
+}
+// Start times every 15 minutes, from 6 AM through the next 5:45 AM, so evening parties are easy to find.
+function fillTimes() {
+  var sel = document.getElementById("pfTime");
+  if (sel.options.length) return;
+  var html = '<option value="">Pick a time</option>';
+  for (var i = 0; i < 96; i++) {
+    var mins = (6 * 60 + i * 15) % (24 * 60);
+    var v = String(Math.floor(mins / 60)).padStart(2, "0") + ":" + String(mins % 60).padStart(2, "0");
+    var h = Math.floor(mins / 60);
+    var label = (h % 12 || 12) + ":" + String(mins % 60).padStart(2, "0") + (h < 12 ? " AM" : " PM");
+    html += '<option value="' + v + '">' + label + "</option>";
+  }
+  sel.innerHTML = html;
 }
 function closePartyForm() {
   document.getElementById("partyModal").classList.remove("open");
@@ -213,7 +228,7 @@ function savePartyForm(ev) {
     time: document.getElementById("pfTime").value,
     place: document.getElementById("pfPlace").value.trim().slice(0, 80),
   };
-  var g = Math.max(1, Math.min(MAX_GUESTS, Math.round(Number(document.getElementById("pfGuests").value) || 12)));
+  var g = Math.max(0, Math.min(MAX_GUESTS, Math.round(Number(document.getElementById("pfGuests").value) || 0)));
   if (partyFormMode === "edit") {
     Parties.update(Parties.active().id, fields);
     setGuests(g);

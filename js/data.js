@@ -1,4 +1,4 @@
-var guests = 12,
+var guests = 0,
   mealType = "appetizer",
   costTier = "mid";
 var shopItems = {},
@@ -31,7 +31,7 @@ var tierNotes = {
 var boardItemDefs = {
   meats: {
     label: "Cured Meats",
-    items: ["Prosciutto", "Salami", "Soppressata", "Coppa", "Bresaola", "Pepperoni", "Chorizo", "Mortadella", "Beef sticks"],
+    items: ["Prosciutto", "Serrano Ham", "Speck", "Salami", "Saucisson Sec", "Soppressata", "Coppa", "Bresaola", "Pepperoni", "Chorizo", "Mortadella", "Beef sticks"],
   },
   cheeses: {
     label: "Cheeses",

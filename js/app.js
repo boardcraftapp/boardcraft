@@ -67,7 +67,7 @@ function switchTab(t) {
 var MAX_GUESTS = 2000;
 function setGuests(n) {
   n = Math.round(Number(n));
-  if (!isFinite(n) || n < 1) n = 1;
+  if (!isFinite(n) || n < 0) n = 0;
   if (n > MAX_GUESTS) n = MAX_GUESTS;
   guests = n;
   var input = document.getElementById("guestNum");
@@ -153,7 +153,7 @@ function getQuantities() {
     crackerCount: Math.round(((total * mix.cracker) / 100) * 4),
     produceOz: Math.round((total * mix.veg) / 100),
     accentsOz: Math.round(base * 0.5),
-    spreadsCount: Math.round(Math.max(2, guests / 6)),
+    spreadsCount: guests ? Math.round(Math.max(2, guests / 6)) : 0,
   };
 }
 function fmtOz(oz) {
@@ -557,14 +557,26 @@ function getPrices() {
     });
     return p;
   }
-  return tierPrices[costTier] || tierPrices.mid;
+  var base = tierPrices[costTier] || tierPrices.mid;
+  var f = AREA_FACTORS[Store.get("costArea", "avg")] || 1;
+  var out = {};
+  Object.keys(base).forEach(function (k) {
+    out[k] = Math.round(base[k] * f * 2) / 2;
+  });
+  return out;
+}
+// A rough nudge for local grocery prices: about 10% under or 15% over the national average.
+var AREA_FACTORS = { lower: 0.9, avg: 1, higher: 1.15 };
+function setArea(a) {
+  Store.set("costArea", a);
+  renderCostRows();
 }
 function specialtyCount() {
   var n = Object.values(boardSelected).filter(function (o) {
     return o.cat === "specialty";
   }).length;
   // one of each specialty item per 15 guests
-  return n * Math.max(1, Math.ceil(guests / 15));
+  return guests ? n * Math.max(1, Math.ceil(guests / 15)) : 0;
 }
 function computeCost() {
   var p = getPrices(),
@@ -582,7 +594,7 @@ function computeCost() {
   COST_LINES.forEach(function (c) {
     total += qty[c.k] * (p[c.k] || 0);
   });
-  return { qty: qty, prices: p, total: total, perPerson: total / guests, buffered: total * 1.15 };
+  return { qty: qty, prices: p, total: total, perPerson: guests ? total / guests : 0, buffered: total * 1.15 };
 }
 function qtyText(k, v) {
   if (k === "crackers") return v + (v === 1 ? " box" : " boxes");
@@ -593,8 +605,13 @@ function qtyText(k, v) {
 function renderCostRows() {
   var c = computeCost();
   var isCustom = costTier === "custom";
-  document.querySelectorAll(".tier-btn").forEach(function (b) {
+  document.querySelectorAll(".tier-btn[data-tier]").forEach(function (b) {
     b.classList.toggle("active", b.getAttribute("data-tier") === costTier);
+  });
+  var area = Store.get("costArea", "avg");
+  document.querySelectorAll(".tier-btn[data-area]").forEach(function (b) {
+    b.classList.toggle("active", b.getAttribute("data-area") === area);
+    b.disabled = costTier === "custom";
   });
   document.getElementById("costRows").innerHTML = COST_LINES.map(function (l) {
     return (
@@ -906,7 +923,7 @@ function buildExport() {
     " jars\n\nESTIMATED COST\nTotal: $" +
     total.toFixed(2) +
     "  |  Per person: $" +
-    (total / guests).toFixed(2) +
+    (guests ? total / guests : 0).toFixed(2) +
     "  |  With buffer: $" +
     (total * 1.15).toFixed(2) +
     "\n";

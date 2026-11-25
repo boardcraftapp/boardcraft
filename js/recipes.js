@@ -146,7 +146,7 @@ function scaleOn() {
 }
 function menuFactor(entry) {
   var r = Recipes.find(entry.rid);
-  if (scaleOn() && r && r.servings > 0) return guests / r.servings;
+  if (scaleOn() && r && r.servings > 0 && guests > 0) return guests / r.servings;
   return entry.batches || 1;
 }
 function isOnMenu(rid) {
@@ -338,7 +338,7 @@ function renderRecipes() {
       '<button class="btn sm ' + (on ? "on" : "primary") + '" onclick="toggleMenu(\'' + r.id + "')\">" + (on ? "On the menu ✓" : "Add to menu") + "</button></div>";
     if (isOpen) {
       html +=
-        '<div class="recipe-detail"><h4>Ingredients</h4><ul>' +
+        '<div class="recipe-detail">' + (recipeTimes(r) ? '<p class="recipe-times">' + esc(recipeTimes(r)) + "</p>" : "") + "<h4>Ingredients</h4><ul>" +
         (r.ingredients || []).map(function (i) {
           return "<li>" + esc(i) + "</li>";
         }).join("") +
@@ -350,6 +350,26 @@ function renderRecipes() {
   });
   el.innerHTML = html;
 }
+// Choices for the oven temperature and cooking time dropdowns. An empty value means N/A.
+var OVEN_TEMPS = ["Broil"];
+for (var t = 200; t <= 500; t += 25) OVEN_TEMPS.push(t + "°F");
+var COOK_TIMES = ["5 min", "10 min", "15 min", "20 min", "25 min", "30 min", "35 min", "40 min", "45 min", "50 min", "55 min",
+  "1 hr", "1 hr 15 min", "1 hr 30 min", "1 hr 45 min", "2 hr", "2 hr 30 min", "3 hr", "4 hr", "5 hr", "6 hr", "8 hr", "Overnight"];
+function selectHtml(id, label, choices, value) {
+  return (
+    '<div class="share-form-row"><label for="' + id + '">' + label + '</label><select id="' + id + '"><option value="">N/A</option>' +
+    choices.map(function (c) {
+      return '<option' + (c === value ? " selected" : "") + ">" + esc(c) + "</option>";
+    }).join("") +
+    "</select></div>"
+  );
+}
+function recipeTimes(r) {
+  var bits = [];
+  if (r.ovenTemp) bits.push("Oven " + r.ovenTemp);
+  if (r.cookTime) bits.push("Cook " + r.cookTime);
+  return bits.join(" · ");
+}
 function recipeFormHtml(r) {
   r = r || { name: "", servings: 8, ingredients: [], steps: "" };
   var id = r.id || "new";
@@ -358,6 +378,7 @@ function recipeFormHtml(r) {
     "<h3>" + (r.id ? "Edit recipe" : "New recipe") + "</h3>" +
     '<div class="share-form-row"><label for="rfName">Recipe name</label><input id="rfName" maxlength="80" required value="' + esc(r.name) + '" placeholder="e.g. Hot honey whipped feta"></div>' +
     '<div class="share-form-row"><label for="rfServes">Serves how many?</label><input id="rfServes" type="number" inputmode="numeric" min="1" max="500" value="' + esc(r.servings || 8) + '" style="width:110px"></div>' +
+    '<div class="form-2">' + selectHtml("rfOven", "Oven temperature", OVEN_TEMPS, r.ovenTemp || "") + selectHtml("rfCook", "Cooking time", COOK_TIMES, r.cookTime || "") + "</div>" +
     '<div class="share-form-row"><label for="rfIngredients">Ingredients, one per line</label><textarea id="rfIngredients" rows="7" maxlength="4000" placeholder="8 oz feta\n4 oz cream cheese\n2 tbsp hot honey\n1 lemon">' +
     esc((r.ingredients || []).join("\n")) + "</textarea>" +
     '<p class="card-hint" style="margin:4px 0 0">Start each line with the amount, like "2 cups flour" or "1 1/2 lb shrimp". Lines without an amount (like "salt to taste") are fine too.</p></div>' +
@@ -408,6 +429,8 @@ function saveRecipe(ev, id) {
     .filter(Boolean)
     .slice(0, 80);
   r.steps = document.getElementById("rfSteps").value.trim();
+  r.ovenTemp = document.getElementById("rfOven").value;
+  r.cookTime = document.getElementById("rfCook").value;
   Recipes.save(r);
   editingRecipe = null;
   openRecipe = r.id;
@@ -437,6 +460,8 @@ function addSampleRecipe() {
     id: "r" + Store.newId().slice(1),
     name: "Hot honey whipped feta",
     servings: 8,
+    ovenTemp: "",
+    cookTime: "",
     ingredients: ["8 oz feta", "4 oz cream cheese, softened", "2 tbsp olive oil", "2 tbsp hot honey", "1 lemon", "1/4 cup chopped pistachios", "1 baguette"],
     steps:
       "Blend the feta, cream cheese, olive oil and the juice of half the lemon until smooth.\nSpread in a shallow bowl, drizzle with hot honey and top with pistachios and lemon zest.\nServe with sliced, toasted baguette.",
