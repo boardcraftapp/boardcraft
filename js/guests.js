@@ -40,7 +40,7 @@ var GuestsApi = (function () {
       };
       if (message !== undefined) body.message = message ? message.slice(0, 1000) : null;
       return call(
-        "/rest/v1/events?on_conflict=owner,local_id&select=id,invite_token,message,rsvp_open",
+        "/rest/v1/events?on_conflict=owner,local_id&select=id,invite_token,message,rsvp_open,max_party_size",
         { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=representation" }, body: JSON.stringify(body) },
         true,
       ).then(function (rows) {
@@ -49,6 +49,9 @@ var GuestsApi = (function () {
     },
     setOpen: function (eventId, open) {
       return call("/rest/v1/events?id=eq." + eventId, { method: "PATCH", body: JSON.stringify({ rsvp_open: open }) }, true);
+    },
+    setMaxParty: function (eventId, max) {
+      return call("/rest/v1/events?id=eq." + eventId, { method: "PATCH", body: JSON.stringify({ max_party_size: max }) }, true);
     },
     listGuests: function (eventId) {
       return call("/rest/v1/guests?event_id=eq." + eventId + "&select=*&order=created_at.asc", {}, true);
@@ -76,7 +79,7 @@ var GuestsApi = (function () {
           method: "POST",
           body: JSON.stringify({
             p_token: token, p_name: a.name, p_email: a.email, p_phone: a.phone, p_status: a.status,
-            p_party_size: a.size, p_note: a.note, p_email_ok: a.emailOk, p_text_ok: false,
+            p_party_size: a.size, p_note: a.note, p_email_ok: a.emailOk, p_text_ok: false, p_companions: a.companions || [],
           }),
         },
         false,
@@ -174,6 +177,7 @@ function renderGuests() {
     '<div class="share-form-row" style="margin-top:0.8rem"><label for="inviteMsg">Note to your guests (shows on the invite)</label><textarea id="inviteMsg" rows="2" maxlength="1000" placeholder="e.g. Bring a lawn chair! Parking is on the street.">' + esc(ev.message || "") + "</textarea></div>" +
     '<div class="row-gap"><button class="btn sm" onclick="saveInviteMsg()">Save note</button>' +
     '<label class="check-row"><input type="checkbox" ' + (ev.rsvp_open ? "checked" : "") + ' onchange="toggleRsvpOpen(this.checked)"> Accepting RSVPs</label></div>' +
+    '<div class="share-form-row" style="margin-top:0.8rem"><label for="maxParty">How many people can each guest bring?</label><select id="maxParty" onchange="saveMaxParty(this.value)">' + maxPartyOptions(ev.max_party_size) + "</select></div>" +
     "<p class=\"muted small\" style=\"margin-top:6px\">Party name, date, time and location come from Home. Edit them there and they update on the invite.</p></div>";
 
   html +=
@@ -193,6 +197,7 @@ function renderGuests() {
     html +=
       '<div class="guest-row"><button class="guest-main" onclick="editGuest(\'' + g.id + '\')"><b>' + esc(g.name) + "</b>" +
       (contact ? '<span class="muted small">' + esc(contact) + "</span>" : "") +
+      (g.companions && g.companions.length ? '<span class="guest-with">With ' + esc(g.companions.join(", ")) + "</span>" : "") +
       (g.note ? '<span class="guest-note">' + esc(g.note) + "</span>" : "") +
       '</button><span class="pill s-' + g.status + '">' + STATUS_LABEL[g.status] + (g.status === "yes" && g.party_size > 1 ? " · " + g.party_size : "") + "</span></div>";
   });
@@ -210,7 +215,7 @@ function renderGuests() {
 }
 
 function guestFormHtml(g) {
-  g = g || { name: "", email: "", phone: "", status: "invited", party_size: 1, note: "" };
+  g = g || { name: "", email: "", phone: "", status: "invited", party_size: 1, note: "", companions: [] };
   var id = g.id || "new";
   var opts = ["invited", "yes", "maybe", "no"]
     .map(function (s) {
@@ -225,6 +230,7 @@ function guestFormHtml(g) {
     '<div class="share-form-row"><label for="gfPhone">Phone</label><input id="gfPhone" type="tel" maxlength="40" value="' + esc(g.phone || "") + '"></div></div>' +
     '<div class="form-2"><div class="share-form-row"><label for="gfStatus">Answer</label><select id="gfStatus">' + opts + "</select></div>" +
     '<div class="share-form-row"><label for="gfSize">How many in their group</label><input id="gfSize" type="number" min="0" max="20" value="' + esc(g.party_size) + '"></div></div>' +
+    '<div class="share-form-row"><label for="gfWith">Who else is in their group? (separate names with commas)</label><input id="gfWith" maxlength="600" placeholder="e.g. Sam Lee, Ava Lee" value="' + esc((g.companions || []).join(", ")) + '"></div>' +
     '<div class="share-form-row"><label for="gfNote">Allergies or notes</label><input id="gfNote" maxlength="500" value="' + esc(g.note || "") + '"></div>' +
     '<div class="row-gap end">' +
     (g.id ? '<span id="gfDel"><button type="button" class="btn danger-link" onclick="askDeleteGuest(\'' + g.id + '\')">' + icon("trash", 14) + " Remove</button></span>" : "") +
@@ -262,6 +268,7 @@ function saveGuest(ev, id) {
     status: document.getElementById("gfStatus").value,
     party_size: Math.max(0, Math.min(20, Math.round(Number(document.getElementById("gfSize").value) || 0))),
     note: document.getElementById("gfNote").value.trim().slice(0, 500) || null,
+    companions: document.getElementById("gfWith").value.split(",").map(function (x) { return x.trim().slice(0, 80); }).filter(Boolean).slice(0, 19),
   };
   if (!g.name) return false;
   var job =
@@ -362,6 +369,37 @@ function useRsvpCount(n) {
   toast("Your food plan is now for " + n + " guests.");
 }
 
+// How many people one invite covers (the guest included). Empty means no limit.
+var MAX_PARTY_CHOICES = [
+  [1, "Just themselves"],
+  [2, "A plus-one (2 people)"],
+  [3, "Up to 3 people"],
+  [4, "Up to 4 people"],
+  [5, "Up to 5 people"],
+  [6, "Up to 6 people"],
+  [8, "Up to 8 people"],
+  [10, "Up to 10 people"],
+  ["", "No limit"],
+];
+function maxPartyOptions(cur) {
+  cur = cur == null ? "" : cur;
+  return MAX_PARTY_CHOICES.map(function (c) {
+    return '<option value="' + c[0] + '"' + (String(c[0]) === String(cur) ? " selected" : "") + ">" + c[1] + "</option>";
+  }).join("");
+}
+function saveMaxParty(v) {
+  var max = v === "" ? null : Number(v);
+  GuestsApi.setMaxParty(guestState.event.id, max)
+    .then(function () {
+      guestState.event.max_party_size = max;
+      toast(max === 1 ? "Each invite is now just for the guest." : max ? "Each guest can now bring a group of up to " + max + "." : "Guests can bring as many people as they like.");
+    })
+    .catch(function () {
+      toast("That didn't save. Please try again.");
+      loadGuests();
+    });
+}
+
 // ---------- guest side: the invite page (?rsvp=...) ----------
 var RSVP_TOKEN = (function () {
   var m = /[?&]rsvp=([a-f0-9]{16,64})/i.exec(location.search);
@@ -431,7 +469,7 @@ function renderRsvp(mode) {
     '<form class="rsvp-form" onsubmit="return sendRsvp(event)">' +
     '<h3>Will you be there?</h3><div class="rsvp-choices">' + choice("yes", "Yes!") + choice("maybe", "Maybe") + choice("no", "Can't make it") + "</div>" +
     '<div class="share-form-row"><label for="rvName">Your name</label><input id="rvName" required maxlength="80" autocomplete="name" value="' + esc(a.name || "") + '"></div>' +
-    '<div class="share-form-row" id="rvSizeRow"><label for="rvSize">How many people in your group, including you?</label><input id="rvSize" type="number" inputmode="numeric" min="1" max="20" value="' + esc(a.size || 1) + '" style="width:110px"></div>' +
+    rsvpSizeHtml(a) +
     '<div class="share-form-row"><label for="rvEmail">Email</label><input id="rvEmail" type="email" maxlength="200" autocomplete="email" value="' + esc(a.email || "") + '"></div>' +
     '<div class="share-form-row"><label for="rvPhone">Phone (optional)</label><input id="rvPhone" type="tel" maxlength="40" autocomplete="tel" value="' + esc(a.phone || "") + '"></div>' +
     '<div class="share-form-row"><label for="rvNote">Allergies, dietary needs or a note for the host (optional)</label><textarea id="rvNote" rows="2" maxlength="500">' + esc(a.note || "") + "</textarea></div>" +
@@ -439,6 +477,36 @@ function renderRsvp(mode) {
     '<p class="signin-error" id="rvError"></p>' +
     '<button class="btn primary rsvp-send" type="submit" id="rvSend">Send my RSVP</button></form></div>' + foot;
   syncRsvpSize();
+}
+function rsvpMax() {
+  var m = rsvpInvite && rsvpInvite.max_party_size;
+  return m ? Math.max(1, Math.min(20, m)) : 20;
+}
+function rsvpSizeHtml(a) {
+  var max = rsvpMax();
+  if (max === 1) return '<p class="muted small" id="rvSizeRow">This invitation is just for you.</p>';
+  var cur = Math.min(max, Math.max(1, a.size || 1));
+  var opts = "";
+  for (var i = 1; i <= max; i++) opts += '<option value="' + i + '"' + (i === cur ? " selected" : "") + ">" + (i === 1 ? "Just me" : "Me + " + (i - 1)) + "</option>";
+  return (
+    '<div id="rvSizeRow"><div class="share-form-row"><label for="rvSize">Who\'s coming?' + (rsvpInvite.max_party_size ? ' <span class="muted small">(up to ' + max + " people on this invite)</span>" : "") + '</label>' +
+    '<select id="rvSize" onchange="syncRsvpNames()" style="max-width:200px">' + opts + "</select></div>" +
+    '<div id="rvNames"></div></div>'
+  );
+}
+function syncRsvpNames() {
+  var box = document.getElementById("rvNames");
+  var sel = document.getElementById("rvSize");
+  if (!box || !sel) return;
+  var keep = [].map.call(box.querySelectorAll("input"), function (x) { return x.value; });
+  var saved = rsvpAnswer.companions || [];
+  var n = Number(sel.value) - 1;
+  var html = "";
+  for (var i = 0; i < n; i++) {
+    var v = keep[i] != null ? keep[i] : saved[i] || "";
+    html += '<div class="share-form-row"><label for="rvWith' + i + '">Guest ' + (i + 2) + ' name</label><input id="rvWith' + i + '" maxlength="80" placeholder="Their name (helps with seating)" value="' + esc(v) + '"></div>';
+  }
+  box.innerHTML = html;
 }
 function pickRsvp(v) {
   rsvpAnswer.status = v;
@@ -450,6 +518,7 @@ function pickRsvp(v) {
 function syncRsvpSize() {
   var row = document.getElementById("rvSizeRow");
   if (row) row.style.display = rsvpAnswer.status === "no" ? "none" : "";
+  syncRsvpNames();
 }
 function sendRsvp(ev) {
   ev.preventDefault();
@@ -464,7 +533,8 @@ function sendRsvp(ev) {
     name: document.getElementById("rvName").value.trim(),
     email: email,
     phone: document.getElementById("rvPhone").value.trim(),
-    size: rsvpAnswer.status === "no" ? 0 : Math.max(1, Math.min(20, Math.round(Number(document.getElementById("rvSize").value) || 1))),
+    size: rsvpAnswer.status === "no" ? 0 : document.getElementById("rvSize") ? Math.max(1, Math.min(rsvpMax(), Number(document.getElementById("rvSize").value) || 1)) : 1,
+    companions: rsvpAnswer.status === "no" ? [] : [].map.call(document.querySelectorAll("#rvNames input"), function (x) { return x.value.trim().slice(0, 80); }).filter(Boolean),
     note: document.getElementById("rvNote").value.trim(),
     emailOk: !!email && document.getElementById("rvEmailOk").checked,
   };
