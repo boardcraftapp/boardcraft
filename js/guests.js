@@ -208,9 +208,12 @@ function renderGuests() {
   });
   html +=
     '<div class="card updates-card"><h3>Send guests an update' + (extras ? "" : ' <span class="extras-tag">' + icon("lock", 11) + " Extras</span>") + "</h3>" +
-    '<p class="muted small">' + emailable.length + " guest" + (emailable.length === 1 ? " has" : "s have") + " asked for email updates.</p>" +
-    '<div class="row-gap"><button class="btn primary sm" onclick="copyGuestEmails()">Copy their email addresses</button></div>' +
-    '<p class="muted small" style="margin-top:6px">Paste them into the BCC line of a new email from your own inbox. Sending straight from BoardCraft is coming soon.</p></div>';
+    '<p class="muted small" style="margin-bottom:10px">' + emailable.length + " guest" + (emailable.length === 1 ? " has" : "s have") + " asked for email updates. Everyone gets their own copy, and their replies come to your email.</p>" +
+    '<div class="share-form-row"><label for="updSubject">Subject</label><input id="updSubject" maxlength="120" placeholder="e.g. Parking update for Saturday"></div>' +
+    '<div class="share-form-row"><label for="updMsg">Message</label><textarea id="updMsg" rows="4" maxlength="5000" placeholder="e.g. We\'re moving inside because of rain. Same time, same place!"></textarea></div>' +
+    '<div class="row-gap"><button class="btn primary sm" id="updSend" onclick="sendGuestUpdate()">Send update</button>' +
+    '<button class="btn sm" onclick="copyGuestEmails()">Copy their email addresses</button></div>' +
+    '<p class="muted small" style="margin-top:6px">The email shows your party name, date and place, plus a button to see the invite. You can send up to 5 updates a day.</p></div>';
   el.innerHTML = html;
 }
 
@@ -362,6 +365,65 @@ function copyGuestEmails() {
     return;
   }
   copyText(emails.join(", "), emails.length + " email address" + (emails.length === 1 ? "" : "es") + " copied.");
+}
+function sendGuestUpdate() {
+  if (!Account.hasExtras()) {
+    showExtras("Sending updates to your guests");
+    return;
+  }
+  var subject = document.getElementById("updSubject").value.trim();
+  var message = document.getElementById("updMsg").value.trim();
+  if (!subject || !message) {
+    toast("Add a subject and a message first.");
+    return;
+  }
+  var count = guestState.guests.filter(function (g) { return g.email && g.email_ok && g.status !== "no"; }).length;
+  if (!count) {
+    toast("No guests have asked for email updates yet.");
+    return;
+  }
+  var btn = document.getElementById("updSend");
+  if (btn.getAttribute("data-confirm") !== "1") {
+    btn.setAttribute("data-confirm", "1");
+    btn.textContent = "Yes, email " + count + " guest" + (count === 1 ? "" : "s");
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = "Sending...";
+  Account.token()
+    .then(function (token) {
+      if (!token) throw new Error("signed_out");
+      return fetch(SUPABASE_URL + "/functions/v1/send-guest-update", {
+        method: "POST",
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + token, "Content-Type": "application/json" },
+        body: JSON.stringify({ event_id: guestState.event.id, subject: subject, message: message, origin: location.origin }),
+      }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (!r.ok) throw new Error(j.error || "send_failed");
+          return j;
+        });
+      });
+    })
+    .then(function (j) {
+      document.getElementById("updSubject").value = "";
+      document.getElementById("updMsg").value = "";
+      toast("Update sent to " + j.sent + " guest" + (j.sent === 1 ? "" : "s") + ".");
+    })
+    .catch(function (e) {
+      var m = {
+        needs_extras: "Sending updates is part of Extras.",
+        too_many: "You've sent 5 updates today. Try again tomorrow.",
+        no_guests: "No guests have asked for email updates yet.",
+        email_not_set_up: "Email sending isn't switched on yet.",
+        signed_out: "Please sign in again.",
+      }[e.message];
+      toast(m || "That didn't send. Please try again.");
+    })
+    .then(function () {
+      btn.disabled = false;
+      btn.removeAttribute("data-confirm");
+      btn.textContent = "Send update";
+    });
 }
 function useRsvpCount(n) {
   setGuests(n);
