@@ -516,6 +516,10 @@ body.rsvp-mode .app{display:none}
 .todo-item.done .todo-text{text-decoration:line-through;color:var(--medium)}
 .todo-due{font-size:0.75rem;font-weight:700;color:var(--medium);white-space:nowrap}
 .todo-due.late{color:var(--accent)}
+.code-row{display:flex;gap:8px;margin:0.6rem 0}
+.modal-card .code-row .btn.primary{flex:0 0 auto;width:auto;padding:0.6rem 1.1rem}
+.modal-card .code-row input{margin:0}
+.code-row input{flex:1;min-width:0;padding:0.6rem 0.8rem;border:1.5px solid var(--light);border-radius:12px;font:inherit;font-size:18px;letter-spacing:3px}
 .todo-del{border:none;background:none;color:var(--medium);cursor:pointer;padding:4px;display:inline-flex;border-radius:8px}
 .todo-del:hover{color:var(--accent);background:var(--warm)}
 /* colored buttons: every button carries one of the confetti colors */
@@ -720,8 +724,13 @@ body.rsvp-mode .app{display:none}
     </form>
     <div id="signInSent" style="display:none">
       <h3>Check your email</h3>
-      <p>We sent a sign-in link to <strong id="signInSentTo"></strong>. Open it on this device to finish signing in. It may take a minute, and it can land in spam.</p>
-      <button class="btn" onclick="closeSignIn()">OK</button>
+      <p>We sent an email to <strong id="signInSentTo"></strong>. Type the code from that email here, or tap the link in it on this device. It may take a minute, and it can land in spam.</p>
+      <form onsubmit="return submitSignInCode(event)" class="code-row">
+        <input id="signInCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Code" aria-label="Sign-in code">
+        <button class="btn primary" type="submit" id="signInCodeBtn">Sign in</button>
+      </form>
+      <p class="signin-error" id="signInCodeError"></p>
+      <button class="btn" onclick="closeSignIn()">Close</button>
     </div>
   </div>
 </div>

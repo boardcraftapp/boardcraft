@@ -193,6 +193,31 @@ var Account = (function () {
         );
       });
     },
+    // Sign in with the code from the email. Works even when an email scanner has already used up the link.
+    verifyCode: function (email, code) {
+      return fetch(SUPABASE_URL + "/auth/v1/verify", {
+        method: "POST",
+        headers: { apikey: SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "email", email: email, token: code }),
+      })
+        .then(function (r) {
+          return r.json().then(function (d) {
+            if (!r.ok || !d.access_token) throw new Error("bad_code");
+            return d;
+          });
+        })
+        .then(function (d) {
+          session = {
+            access_token: d.access_token,
+            refresh_token: d.refresh_token,
+            expires_at: d.expires_at || Math.floor(Date.now() / 1000) + (d.expires_in || 3600),
+            email: (d.user && d.user.email) || email,
+          };
+          save();
+          notify();
+          return checkExtras();
+        });
+    },
     signOut: function () {
       var s = session;
       session = null;
@@ -302,6 +327,8 @@ function openSignIn() {
   document.getElementById("signInForm").style.display = "";
   document.getElementById("signInSent").style.display = "none";
   document.getElementById("signInError").textContent = "";
+  document.getElementById("signInCode").value = "";
+  document.getElementById("signInCodeError").textContent = "";
   setTimeout(function () {
     document.getElementById("signInEmail").focus();
   }, 50);
@@ -336,6 +363,31 @@ function submitSignIn(ev) {
     .then(function () {
       btn.disabled = false;
       btn.textContent = "Email me a sign-in link";
+    });
+  return false;
+}
+
+function submitSignInCode(ev) {
+  if (ev) ev.preventDefault();
+  var code = document.getElementById("signInCode").value.replace(/\D/g, "");
+  var err = document.getElementById("signInCodeError");
+  if (code.length < 6) {
+    err.textContent = "Please type the code from the email.";
+    return false;
+  }
+  var btn = document.getElementById("signInCodeBtn");
+  btn.disabled = true;
+  err.textContent = "";
+  Account.verifyCode(document.getElementById("signInSentTo").textContent, code)
+    .then(function () {
+      closeSignIn();
+      toast("You're signed in.");
+    })
+    .catch(function () {
+      err.textContent = "That code didn't work. Check it, or ask for a new email.";
+    })
+    .then(function () {
+      btn.disabled = false;
     });
   return false;
 }
