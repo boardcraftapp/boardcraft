@@ -68,13 +68,13 @@ var GuestsApi = (function () {
       return call("/rest/v1/guests?id=eq." + id, { method: "DELETE" }, true);
     },
     getInvite: function (token) {
-      return call("/rest/v1/rpc/get_invite", { method: "POST", body: JSON.stringify({ p_token: token }) }, false).then(function (rows) {
+      return call("/rest/v1/rpc/get_invite_v2", { method: "POST", body: JSON.stringify({ p_token: token }) }, false).then(function (rows) {
         return rows && rows[0];
       });
     },
     submitRsvp: function (token, a) {
       return call(
-        "/rest/v1/rpc/submit_rsvp",
+        "/rest/v1/rpc/submit_rsvp_v2",
         {
           method: "POST",
           body: JSON.stringify({
