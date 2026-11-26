@@ -1,0 +1,350 @@
+// Parties: each party has its own details (name, date, time, location, guests) and its own
+// board, shopping list, menu and notes. The Home tab shows the open party and everything you can plan for it.
+var FREE_PARTY_LIMIT = 1;
+
+var Parties = (function () {
+  function list() {
+    return Store.get("parties", []);
+  }
+  function save(arr) {
+    Store.set("parties", arr);
+  }
+  function find(id) {
+    return (
+      list().filter(function (p) {
+        return p.id === id;
+      })[0] || null
+    );
+  }
+  function active() {
+    return find(Store.get("activeParty")) || list()[0];
+  }
+  function update(id, fields) {
+    var arr = list().map(function (p) {
+      return p.id === id ? Object.assign({}, p, fields) : p;
+    });
+    save(arr);
+  }
+  function open(id) {
+    Store.set("activeParty", id);
+    Store.set("tab", "home");
+    Store.flush();
+    location.reload();
+  }
+  function canAddMore() {
+    return Account.hasExtras() || list().length < FREE_PARTY_LIMIT;
+  }
+  return {
+    list: list,
+    find: find,
+    active: active,
+    update: update,
+    open: open,
+    canAddMore: canAddMore,
+    create: function (fields, copyFromId) {
+      var id = Store.newId();
+      var p = Object.assign({ id: id, name: "New party", date: "", time: "", place: "", created: Date.now() }, fields);
+      p.id = id;
+      save(list().concat([p]));
+      if (copyFromId) Store.copyParty(copyFromId, id);
+      return id;
+    },
+    remove: function (id) {
+      var arr = list().filter(function (p) {
+        return p.id !== id;
+      });
+      Store.dropParty(id);
+      if (!arr.length) {
+        var nid = Store.newId();
+        arr = [{ id: nid, name: "My party", date: "", time: "", place: "", created: Date.now() }];
+      }
+      save(arr);
+      return arr[0].id;
+    },
+  };
+})();
+
+// ---------- dates ----------
+function partyDate(p) {
+  if (!p || !p.date) return null;
+  var parts = p.date.split("-");
+  if (parts.length !== 3) return null;
+  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+}
+function daysUntil(p) {
+  var d = partyDate(p);
+  if (!d) return null;
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((d - today) / 86400000);
+}
+function fmtTime(t) {
+  if (!t) return "";
+  var m = /^(\d{1,2}):(\d{2})/.exec(t);
+  if (!m) return t;
+  var h = Number(m[1]);
+  var ap = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return h + (m[2] === "00" ? "" : ":" + m[2]) + " " + ap;
+}
+function partyMeta(p, guestCount) {
+  var bits = [];
+  var d = partyDate(p);
+  if (d) bits.push(d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }));
+  if (p.time) bits.push(fmtTime(p.time));
+  if (p.place) bits.push(p.place);
+  if (guestCount) bits.push(guestCount + (guestCount === 1 ? " guest" : " guests"));
+  return bits.join(" · ");
+}
+
+// ---------- Home ----------
+var HOME_TILES = [
+  { tab: "calc", label: "Quantities", icon: "qty", color: "lemon" },
+  { tab: "board", label: "Board builder", icon: "board", color: "tangerine" },
+  { tab: "visual", label: "Style board", icon: "style", color: "lilac", extras: true },
+  { tab: "recipes", label: "Recipes", icon: "recipes", color: "berry" },
+  { tab: "shop", label: "Shopping list", icon: "shop", color: "mint" },
+  { tab: "cost", label: "Cost", icon: "cost", color: "ink" },
+  { tab: "guests", label: "Guests & RSVPs", icon: "guests", color: "sky" },
+  { soon: true, label: "Inspiration", icon: "inspo" },
+  { tab: "tips", label: "Tips & ideas", icon: "tips", color: "coral" },
+];
+
+function renderHome() {
+  var el = document.getElementById("home");
+  if (!el) return;
+  var p = Parties.active();
+  var days = daysUntil(p);
+  var countdown =
+    days === null
+      ? ""
+      : days > 0
+        ? '<div class="count">' + days + "<span>" + (days === 1 ? "day" : "days") + "</span></div>"
+        : days === 0
+          ? '<div class="count">Today!</div>'
+          : '<div class="count done">Done</div>';
+  var meta = partyMeta(p, guests);
+  var others = Parties.list().filter(function (o) {
+    return o.id !== p.id;
+  });
+  var menuCount = (Store.get("menu", []) || []).length;
+  var boardCount = Object.keys(boardSelected).length;
+
+  var tiles = HOME_TILES.map(function (t) {
+    if (t.soon)
+      return '<div class="tile soon" aria-disabled="true">' + icon(t.icon, 24) + "<b>" + t.label + "</b><small>Coming soon</small></div>";
+    var locked = t.extras && !Account.hasExtras();
+    return (
+      '<button class="tile c-' + t.color + '" onclick="switchTab(\'' + t.tab + "')\">" + icon(t.icon, 24) + "<b>" + t.label + "</b>" +
+      (locked ? '<small class="tile-lock">' + icon("lock", 12) + " Extras</small>" : "") +
+      "</button>"
+    );
+  }).join("");
+
+  var tip = tips[new Date().getDate() % tips.length];
+  var post = blogPosts[tip.blog !== undefined ? tip.blog : new Date().getDate() % blogPosts.length];
+  var tipText = String(tip.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  if (!tipText && tip.pairings) tipText = tip.pairings.slice(0, 2).map(function (x) { return x.cheese + " with " + x.pair; }).join(". ") + ".";
+
+  var rs = Store.get("rsvpSummary", null);
+  var rsvpStat = rs && rs.total ? "<span>" + rs.people + " coming</span>" : "";
+
+  el.innerHTML =
+    '<p class="hello">Let\'s get this party planned!</p>' +
+    '<section class="event">' +
+    countdown +
+    "<small>" + (others.length ? "Planning now" : "Your party") + "</small>" +
+    '<h2 class="event-name">' + esc(p.name) + "</h2>" +
+    '<div class="event-meta">' + (meta ? esc(meta) : "Add a date, time and location so we can count down with you.") + "</div>" +
+    '<div class="event-stats"><span>' + boardCount + " board item" + (boardCount === 1 ? "" : "s") + "</span><span>" + menuCount + " recipe" + (menuCount === 1 ? "" : "s") + " on the menu</span>" + rsvpStat + "</div>" +
+    '<div class="event-actions"><button class="pill-btn" onclick="openPartyForm(\'edit\')">' + icon("edit", 15) + " Edit details</button>" +
+    '<button class="pill-btn" onclick="copyParty()">' + icon("copy", 15) + " Copy party" + (Account.hasExtras() ? "" : " " + icon("lock", 12)) + "</button></div>" +
+    "</section>" +
+    '<div class="party-switch">' +
+    others
+      .map(function (o) {
+        var dd = partyDate(o);
+        return (
+          '<button class="party-chip" onclick="Parties.open(\'' + esc(o.id) + "')\"><b>" + esc(o.name) + "</b><span>" +
+          (dd ? dd.toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "No date yet") +
+          "</span></button>"
+        );
+      })
+      .join("") +
+    '<button class="party-chip add" onclick="newParty()">' + icon("plus", 16) + "<b>New party</b>" +
+    (Parties.canAddMore() ? "" : "<span>" + icon("lock", 11) + " Extras</span>") +
+    "</button></div>" +
+    '<h3 class="sec">Plan it</h3><div class="tiles">' + tiles + "</div>" +
+    '<div class="seg" role="tablist"><button id="segTodo" onclick="homePane(\'todo\')">To-do</button><button id="segNotes" onclick="homePane(\'notes\')">Notes &amp; ideas</button></div>' +
+    '<div class="card" id="todoPane"><div class="todo-add"><input type="text" id="todoText" maxlength="200" placeholder="Add a to-do, like &quot;Order the cake&quot;" onkeydown="if(event.key===\'Enter\')addTodo()">' +
+    '<input type="date" id="todoDue" aria-label="Due date (optional)"><button class="btn primary" style="padding:0.5rem 1.1rem" onclick="addTodo()">Add</button></div><div id="todoList"></div></div>' +
+    '<div class="card notes-card" id="notesPane"><textarea id="partyNotes" rows="4" maxlength="5000" placeholder="Theme ideas, who\'s bringing what, things not to forget..."></textarea><p class="card-hint" style="margin:6px 0 0">Saved automatically for this party.</p></div>' +
+    '<div class="tip-box"><b>Tip of the day</b>' + esc(tipText) + ' <button class="acct-link" onclick="switchTab(\'tips\')">More tips</button>' +
+    '<p style="margin-top:8px">From the blog: <a href="' + esc(post.url) + '" target="_blank" rel="noopener">' + esc(post.title) + " &rarr;</a></p></div>";
+
+  var notes = document.getElementById("partyNotes");
+  notes.value = Store.get("notes", "");
+  notes.addEventListener("input", function () {
+    Store.set("notes", notes.value);
+  });
+  var label = document.getElementById("partyNow");
+  if (label) label.textContent = p.name;
+  homePane(Store.get("homePane", "todo"));
+  renderTodos();
+}
+
+// ---------- to-do list (one per party) ----------
+function homePane(which) {
+  Store.set("homePane", which);
+  var todo = which !== "notes";
+  document.getElementById("todoPane").style.display = todo ? "" : "none";
+  document.getElementById("notesPane").style.display = todo ? "none" : "";
+  document.getElementById("segTodo").className = todo ? "on" : "";
+  document.getElementById("segNotes").className = todo ? "" : "on";
+}
+function todoList() {
+  var t = Store.get("todos", []);
+  return Array.isArray(t) ? t : [];
+}
+function addTodo() {
+  var input = document.getElementById("todoText");
+  var text = input.value.trim();
+  if (!text) { input.focus(); return; }
+  var list = todoList();
+  list.push({ id: Store.newId(), text: text.slice(0, 200), due: document.getElementById("todoDue").value || "", done: false });
+  Store.set("todos", list);
+  input.value = "";
+  document.getElementById("todoDue").value = "";
+  renderTodos();
+  input.focus();
+}
+function toggleTodo(id) {
+  var list = todoList();
+  list.forEach(function (t) { if (t.id === id) t.done = !t.done; });
+  Store.set("todos", list);
+  renderTodos();
+}
+function removeTodo(id) {
+  Store.set("todos", todoList().filter(function (t) { return t.id !== id; }));
+  renderTodos();
+}
+function renderTodos() {
+  var box = document.getElementById("todoList");
+  if (!box) return;
+  var list = todoList().slice().sort(function (a, b) {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    if (a.due && b.due) return a.due < b.due ? -1 : a.due > b.due ? 1 : 0;
+    return a.due ? -1 : b.due ? 1 : 0;
+  });
+  if (!list.length) {
+    box.innerHTML = '<p class="card-hint" style="margin:0">Nothing here yet. Add the jobs you don\'t want to forget, with a due date if it helps.</p>';
+    return;
+  }
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  box.innerHTML = list.map(function (t) {
+    var due = "";
+    if (t.due) {
+      var d = new Date(t.due + "T00:00:00");
+      var late = !t.done && d < today;
+      due = '<span class="todo-due' + (late ? " late" : "") + '">' + (late ? "Overdue · " : "Due ") + d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + "</span>";
+    }
+    return '<div class="todo-item' + (t.done ? " done" : "") + '"><input type="checkbox" aria-label="Done"' + (t.done ? " checked" : "") +
+      ' onchange="toggleTodo(\'' + esc(t.id) + '\')"><span class="todo-text">' + esc(t.text) + "</span>" + due +
+      '<button class="todo-del" aria-label="Remove" onclick="removeTodo(\'' + esc(t.id) + '\')">' + icon("trash", 15) + "</button></div>";
+  }).join("");
+}
+
+// ---------- party form (new / edit) ----------
+var partyFormMode = "edit";
+function openPartyForm(mode) {
+  partyFormMode = mode;
+  var p = mode === "edit" ? Parties.active() : { name: "", date: "", time: "", place: "" };
+  document.getElementById("partyFormTitle").textContent = mode === "edit" ? "Party details" : "New party";
+  document.getElementById("pfName").value = p.name || "";
+  document.getElementById("pfDate").value = p.date || "";
+  fillTimes();
+  document.getElementById("pfTime").value = p.time || "";
+  document.getElementById("pfPlace").value = p.place || "";
+  document.getElementById("pfGuests").value = mode === "edit" ? guests : 0;
+  document.getElementById("pfDeleteRow").style.display = mode === "edit" ? "" : "none";
+  document.getElementById("pfConfirm").style.display = "none";
+  document.getElementById("partyModal").classList.add("open");
+  setTimeout(function () {
+    document.getElementById("pfName").focus();
+  }, 50);
+}
+// Start times every 15 minutes, from 6 AM through the next 5:45 AM, so evening parties are easy to find.
+function fillTimes() {
+  var sel = document.getElementById("pfTime");
+  if (sel.options.length) return;
+  var html = '<option value="">Pick a time</option>';
+  for (var i = 0; i < 96; i++) {
+    var mins = (6 * 60 + i * 15) % (24 * 60);
+    var v = String(Math.floor(mins / 60)).padStart(2, "0") + ":" + String(mins % 60).padStart(2, "0");
+    var h = Math.floor(mins / 60);
+    var label = (h % 12 || 12) + ":" + String(mins % 60).padStart(2, "0") + (h < 12 ? " AM" : " PM");
+    html += '<option value="' + v + '">' + label + "</option>";
+  }
+  sel.innerHTML = html;
+}
+function closePartyForm() {
+  document.getElementById("partyModal").classList.remove("open");
+}
+function savePartyForm(ev) {
+  if (ev) ev.preventDefault();
+  var fields = {
+    name: document.getElementById("pfName").value.trim().slice(0, 60) || "My party",
+    date: document.getElementById("pfDate").value,
+    time: document.getElementById("pfTime").value,
+    place: document.getElementById("pfPlace").value.trim().slice(0, 80),
+  };
+  var g = Math.max(0, Math.min(MAX_GUESTS, Math.round(Number(document.getElementById("pfGuests").value) || 0)));
+  if (partyFormMode === "edit") {
+    Parties.update(Parties.active().id, fields);
+    setGuests(g);
+    closePartyForm();
+    renderHome();
+    toast("Party details saved.");
+  } else {
+    var id = Parties.create(fields);
+    Store.setFor(id, "guests", g);
+    Parties.open(id);
+  }
+  return false;
+}
+function newParty() {
+  if (!Parties.canAddMore()) {
+    showExtras("Planning more than one party");
+    return;
+  }
+  openPartyForm("new");
+}
+function copyParty() {
+  if (!Account.hasExtras()) {
+    showExtras("Copying a party");
+    return;
+  }
+  var p = Parties.active();
+  var id = Parties.create({ name: (p.name + " (copy)").slice(0, 60), place: p.place, time: p.time, date: "" }, p.id);
+  Store.setFor(id, "notes", Store.getFor(p.id, "notes", ""));
+  toast("Copied. Opening your new party...");
+  setTimeout(function () {
+    Parties.open(id);
+  }, 600);
+}
+function askDeleteParty() {
+  document.getElementById("pfConfirm").style.display = "";
+}
+function deleteParty() {
+  var next = Parties.remove(Parties.active().id);
+  Parties.open(next);
+}
+
+// ---------- Extras pop-up (used when a free limit is reached) ----------
+function showExtras(what) {
+  document.getElementById("extrasBody").innerHTML = paywallHtml(what);
+  document.getElementById("extrasModal").classList.add("open");
+}
+function closeExtras() {
+  document.getElementById("extrasModal").classList.remove("open");
+}

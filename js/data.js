@@ -1,4 +1,4 @@
-var guests = 12,
+var guests = 0,
   mealType = "appetizer",
   costTier = "mid";
 var shopItems = {},
@@ -31,7 +31,7 @@ var tierNotes = {
 var boardItemDefs = {
   meats: {
     label: "Cured Meats",
-    items: ["Prosciutto", "Salami", "Soppressata", "Coppa", "Bresaola", "Pepperoni", "Chorizo", "Mortadella", "Beef sticks"],
+    items: ["Prosciutto", "Serrano Ham", "Speck", "Salami", "Saucisson Sec", "Soppressata", "Coppa", "Bresaola", "Pepperoni", "Chorizo", "Mortadella", "Beef sticks"],
   },
   cheeses: {
     label: "Cheeses",
@@ -190,6 +190,17 @@ function amazonLink(tool) {
   if (tool.url) return tool.url + (tool.url.indexOf("?") > -1 ? "&" : "?") + "tag=" + AMAZON_TAG;
   return "https://www.amazon.com/s?k=" + tool.q + "&tag=" + AMAZON_TAG;
 }
+// Posts from Lynn's Everyday Rituals blog. Each card opens the full post on quinnandcogulfcoast.com.
+// To add a post: copy one entry, change the title, link, short summary and photo (photo is optional).
+var BLOG_HOME = "https://quinnandcogulfcoast.com/everyday-rituals-a-blog";
+var blogPosts = [
+  { title: "How to Build a Grazing Table for 40+ Guests", url: "https://quinnandcogulfcoast.com/everyday-rituals-a-blog/f/how-to-build-a-grazing-table-for-40-guests", summary: "How we build grazing tables that become the edible centerpiece of weddings, parties and milestone celebrations.", img: "https://img1.wsimg.com/isteam/ip/b5967de9-1d48-40b3-a7bb-31735b987bec/DSC_8579-2c457e8.jpg", color: "#ff8a3d" },
+  { title: "How to Keep Everyone Out of the Kitchen on Thanksgiving Day", url: "https://quinnandcogulfcoast.com/everyday-rituals-a-blog/f/how-to-keep-everyone-out-of-the-kitchen-on-thanksgiving-day", summary: "Give guests somewhere better to gather while you cook.", img: "https://img1.wsimg.com/isteam/ip/b5967de9-1d48-40b3-a7bb-31735b987bec/thanksgiving-grazing-board-bradenton.jpg.JPEG", color: "#d63c74" },
+  { title: "DIY vs. Hiring Help: An Honest Guide to Where Your Money Matters", url: "https://quinnandcogulfcoast.com/everyday-rituals-a-blog/f/diy-vs-hiring-help-an-honest-guide-to-where-your-money-matters", summary: "You don't need to hire out everything. Here's where paying for help is worth it.", img: "https://img1.wsimg.com/isteam/stock/G7Kade", color: "#9b8cf2" },
+  { title: "A Guide to Hosting Effortless Events on Florida's Gulf Coast", url: "https://quinnandcogulfcoast.com/everyday-rituals-a-blog/f/a-guide-to-hosting-effortless-events-on-floridas-gulf-coast", summary: "Our guide to relaxed, beautiful gatherings on the Gulf Coast.", img: "", color: "#3fc1a5" },
+  { title: "Beat the Heat: Charcuterie Tips for Florida's Outdoor Events", url: "https://quinnandcogulfcoast.com/everyday-rituals-a-blog/f/beat-the-heat-charcuterie-tips-for-floridas-outdoor-events", summary: "Keep your board fresh and beautiful at outdoor gatherings in the heat.", img: "https://img1.wsimg.com/isteam/ip/b5967de9-1d48-40b3-a7bb-31735b987bec/IMG_2930.JPEG", color: "#4aa8e0" },
+  { title: "Every Host Deserves to Slow Down and Savor the Moment", url: "https://quinnandcogulfcoast.com/everyday-rituals-a-blog/f/every-host-deserves-to-slow-down-and-savor-the-moment", summary: "A reminder to pause and enjoy the party you worked so hard on.", img: "https://img1.wsimg.com/isteam/ip/b5967de9-1d48-40b3-a7bb-31735b987bec/Colorful%20Spread.png", color: "#ffd23f" },
+];
 var tips = [
   {
     title: "The rule of 3s",
@@ -199,12 +210,14 @@ var tips = [
   },
   {
     title: "Temperature matters",
+    blog: 4,
     icon: "&#x1F321;",
     bg: "#EEF5E8",
     content: "Pull meats and cheeses from the fridge 30-45 minutes before serving.",
   },
   {
     title: "Board sizing guide",
+    blog: 0,
     icon: "&#x1F4D0;",
     bg: "#EEF0F8",
     content:

@@ -4,19 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow"><!-- remove at launch so search engines can list the app -->
-<title>Boardcraft — Charcuterie Planner</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>BoardCraft · Plan the party. Craft the moment.</title>
+<meta name="description" content="BoardCraft is a party planner: boards, recipes, shopping lists and more. By Quinn &amp; Co.">
+<meta name="theme-color" content="#d63c74">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--cream:#FAF7F2;--warm:#F0EAE0;--dark:#2A1F14;--medium:#6B5744;--accent:#9B4A1F;--accent2:#C17A3A;--light:#E8DDD0;--green:#4A6741}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh}
+/* Confetti Table: crisp white, one bright color per kind of thing, Shrikhand for the name and big headings, Nunito for everything else */
+:root{--cream:#ffffff;--warm:#f5f3fa;--dark:#1f1a2e;--medium:#5d5670;--accent:#c8326b;--accent2:#ff8a3d;--light:#e7e3f0;--green:#1b8f77;
+--berry:#d63c74;--tangerine:#ff8a3d;--lemon:#ffd23f;--mint:#3fc1a5;--lilac:#9b8cf2;--ink:#1f1a2e;--sky:#4aa8e0;--tint:#fde8f0;--tint-line:#f6c3d6;
+--f-display:'Shrikhand',Georgia,serif;--f-body:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif}
+body{font-family:var(--f-body);background:var(--cream);color:var(--dark);min-height:100vh}
 .app{max-width:820px;margin:0 auto;padding:1.5rem 1rem}
 .header{text-align:center;padding:1.5rem 0 1.2rem;border-bottom:1px solid var(--light);margin-bottom:1.2rem}
-.header h1{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--dark);letter-spacing:-0.5px}
+.header h1{font-family:var(--f-display);font-size:2.2rem;color:var(--dark);letter-spacing:-0.5px}
 .header h1 span{color:var(--accent);font-style:italic}
 .header p{font-size:0.82rem;color:var(--medium);margin-top:0.3rem;letter-spacing:0.05em;text-transform:uppercase}
 .tabs{display:flex;gap:3px;background:var(--warm);border-radius:12px;padding:4px;margin-bottom:1.3rem;flex-wrap:wrap}
-.tab{flex:1;min-width:48px;padding:0.45rem 0.15rem;border:none;background:transparent;cursor:pointer;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:0.65rem;font-weight:500;color:var(--medium);transition:all 0.2s;text-align:center}
+.tab{flex:1;min-width:48px;padding:0.45rem 0.15rem;border:none;background:transparent;cursor:pointer;border-radius:9px;font-family:var(--f-body);font-size:0.65rem;font-weight:500;color:var(--medium);transition:all 0.2s;text-align:center}
 .tab.active{background:white;color:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
 .tab-icon{display:block;font-size:0.9rem;margin-bottom:1px}
 .panel{display:none}.panel.active{display:block}
@@ -26,15 +32,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);
 .guest-control{display:flex;align-items:center;gap:12px;justify-content:center;margin:0.75rem 0}
 .guest-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--light);background:white;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;color:var(--accent);transition:all 0.15s}
 .guest-btn:hover{background:var(--warm);border-color:var(--accent)}
-.guest-num{font-family:'Playfair Display',serif;font-size:2.3rem;color:var(--dark);min-width:55px;text-align:center}
+.guest-num{font-family:var(--f-display);font-size:2.3rem;color:var(--dark);min-width:55px;text-align:center}
 .meal-type{display:flex;gap:5px;flex-wrap:wrap}
-.meal-btn{flex:1;min-width:72px;padding:0.45rem;border:1.5px solid var(--light);border-radius:8px;background:white;cursor:pointer;font-size:0.72rem;font-family:'DM Sans',sans-serif;color:var(--medium);transition:all 0.15s;text-align:center}
-.meal-btn.active{border-color:var(--accent);background:#FDF5EF;color:var(--accent)}
+.meal-btn{flex:1;min-width:72px;padding:0.45rem;border:1.5px solid var(--light);border-radius:8px;background:white;cursor:pointer;font-size:0.72rem;font-family:var(--f-body);color:var(--medium);transition:all 0.15s;text-align:center}
+.meal-btn.active{border-color:var(--accent);background:var(--tint);color:var(--accent)}
 .results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .result-item{background:var(--warm);border-radius:10px;padding:0.8rem;text-align:center}
-.result-qty{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--dark);display:block}
+.result-qty{font-family:var(--f-display);font-size:1.4rem;color:var(--dark);display:block}
 .result-label{font-size:0.67rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--medium);margin-top:2px;display:block}
-.result-item.hl{background:#FDF5EF;border:1px solid #F0D0B8}
+.result-item.hl{background:var(--tint);border:1px solid var(--tint-line)}
 .result-item.hl .result-qty{color:var(--accent)}
 .full-card{grid-column:1/-1}
 .range-row{display:flex;align-items:center;gap:10px;margin-bottom:0.55rem}
@@ -46,12 +52,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);
 .board-section h3{font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--medium);margin-bottom:0.65rem}
 .item-grid{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:0.55rem}
 .item-chip{padding:4px 9px;border-radius:20px;border:1.5px solid var(--light);background:white;cursor:pointer;font-size:0.72rem;color:var(--medium);transition:all 0.15s;user-select:none}
-.item-chip.selected{background:#FDF5EF;border-color:var(--accent);color:var(--accent)}
+.item-chip.selected{background:var(--tint);border-color:var(--accent);color:var(--accent)}
 .item-chip:hover:not(.selected){background:var(--warm)}
 .add-custom-row{display:flex;gap:5px;margin-top:4px}
-.add-custom-row input{flex:1;padding:4px 8px;border:1.5px dashed var(--light);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.72rem;background:white;color:var(--dark)}
+.add-custom-row input{flex:1;padding:4px 8px;border:1.5px dashed var(--light);border-radius:8px;font-family:var(--f-body);font-size:0.72rem;background:white;color:var(--dark)}
 .add-custom-row input:focus{outline:none;border-color:var(--accent);border-style:solid}
-.add-custom-row button{padding:4px 10px;border-radius:8px;border:1.5px solid var(--light);background:white;cursor:pointer;font-size:0.72rem;font-family:'DM Sans',sans-serif;color:var(--accent);white-space:nowrap}
+.add-custom-row button{padding:4px 10px;border-radius:8px;border:1.5px solid var(--light);background:white;cursor:pointer;font-size:0.72rem;font-family:var(--f-body);color:var(--accent);white-space:nowrap}
 .add-custom-row button:hover{background:var(--warm)}
 .board-preview{background:white;border-radius:12px;border:1px solid var(--light);padding:1.1rem;margin-bottom:0.85rem}
 .board-preview h3{font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--medium);margin-bottom:0.85rem}
@@ -68,8 +74,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);
 .vboard-wrap{background:white;border-radius:12px;border:1px solid var(--light);padding:1.1rem;margin-bottom:0.85rem}
 .vboard-wrap h3{font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--medium);margin-bottom:0.85rem}
 .vboard-toggle{display:flex;gap:6px;margin-bottom:0.85rem;flex-wrap:wrap}
-.vboard-btn{padding:0.4rem 0.9rem;border-radius:8px;border:1.5px solid var(--light);background:white;cursor:pointer;font-size:0.75rem;font-family:'DM Sans',sans-serif;color:var(--medium);transition:all 0.15s}
-.vboard-btn.active{border-color:var(--accent);background:#FDF5EF;color:var(--accent)}
+.vboard-btn{padding:0.4rem 0.9rem;border-radius:8px;border:1.5px solid var(--light);background:white;cursor:pointer;font-size:0.75rem;font-family:var(--f-body);color:var(--medium);transition:all 0.15s}
+.vboard-btn.active{border-color:var(--accent);background:var(--tint);color:var(--accent)}
 .vboard-outer{border-radius:16px;padding:8px;background:var(--warm);margin-bottom:8px}
 .vboard-canvas{position:relative;overflow:hidden;user-select:none;width:100%;height:340px}
 .vboard-canvas.oval-board{background:radial-gradient(ellipse at 50% 45%,#D4B896 55%,#B8906A 85%,#96704A 100%);border-radius:50% / 38%;border:10px solid #8B6030;box-shadow:inset 0 2px 8px rgba(0,0,0,0.2)}
@@ -88,7 +94,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);
 .shop-stats{background:var(--warm);border-radius:10px;padding:0.7rem 1rem;margin-bottom:0.85rem;display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;color:var(--medium)}
 .shop-stats span{font-weight:500;color:var(--accent)}
 .add-item-row{display:flex;gap:7px;margin-bottom:0.85rem;flex-wrap:wrap}
-.add-item-row input{flex:1;min-width:120px;padding:0.52rem 0.8rem;border:1.5px dashed var(--light);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.8rem;background:white;color:var(--dark)}
+.add-item-row input{flex:1;min-width:120px;padding:0.52rem 0.8rem;border:1.5px dashed var(--light);border-radius:8px;font-family:var(--f-body);font-size:0.8rem;background:white;color:var(--dark)}
 .add-item-row input:focus{outline:none;border-color:var(--accent);border-style:solid}
 .shop-category{margin-bottom:1.1rem}
 .shop-category h4{font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--medium);padding:0 0 0.45rem;border-bottom:1px solid var(--light);margin-bottom:0.5rem}
@@ -105,7 +111,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);
 .section-divider{border:none;border-top:2px dashed var(--light);margin:1.2rem 0}
 .social-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
 .social-filters{display:flex;gap:6px;flex-wrap:wrap}
-.filter-btn{padding:0.35rem 0.85rem;border-radius:20px;border:1.5px solid var(--light);background:white;cursor:pointer;font-size:0.73rem;font-family:'DM Sans',sans-serif;color:var(--medium);transition:all 0.15s}
+.filter-btn{padding:0.35rem 0.85rem;border-radius:20px;border:1.5px solid var(--light);background:white;cursor:pointer;font-size:0.73rem;font-family:var(--f-body);color:var(--medium);transition:all 0.15s}
 .filter-btn.active{background:var(--accent);border-color:var(--accent);color:white}
 .community-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .community-card{background:white;border-radius:12px;border:1px solid var(--light);overflow:hidden;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s}
@@ -118,20 +124,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);
 .community-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
 .community-tag{padding:2px 7px;border-radius:10px;font-size:0.65rem;font-weight:500;background:var(--warm);color:var(--medium)}
 .community-actions{display:flex;align-items:center;gap:8px}
-.action-btn{background:none;border:none;cursor:pointer;font-size:0.75rem;color:var(--medium);display:flex;align-items:center;gap:3px;padding:4px 6px;border-radius:6px;transition:background 0.1s;font-family:'DM Sans',sans-serif}
+.action-btn{background:none;border:none;cursor:pointer;font-size:0.75rem;color:var(--medium);display:flex;align-items:center;gap:3px;padding:4px 6px;border-radius:6px;transition:background 0.1s;font-family:var(--f-body)}
 .action-btn:hover{background:var(--warm)}
 .action-btn.liked{color:#E24B4A}
 .avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:500;color:white;flex-shrink:0}
 .upload-zone{background:white;border:2px dashed var(--light);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:all 0.15s;margin-bottom:1rem}
-.upload-zone:hover{border-color:var(--accent);background:#FDF5EF}
+.upload-zone:hover{border-color:var(--accent);background:var(--tint)}
 .upload-icon{font-size:2rem;margin-bottom:0.5rem}
 .share-modal{background:white;border-radius:12px;border:1px solid var(--light);padding:1.25rem;margin-bottom:1rem}
 .share-modal h3{font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--medium);margin-bottom:1rem}
 .share-form-row{margin-bottom:0.75rem}
 .share-form-row label{font-size:0.75rem;color:var(--medium);display:block;margin-bottom:4px}
-.share-form-row input,.share-form-row textarea,.share-form-row select{width:100%;padding:0.5rem 0.75rem;border:1.5px solid var(--light);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;color:var(--dark);resize:none}
+.share-form-row input,.share-form-row textarea,.share-form-row select{width:100%;padding:0.5rem 0.75rem;border:1.5px solid var(--light);border-radius:8px;font-family:var(--f-body);font-size:0.82rem;background:white;color:var(--dark);resize:none}
 .share-form-row input:focus,.share-form-row textarea:focus{outline:none;border-color:var(--accent)}
-.recreate-banner{background:linear-gradient(135deg,#FDF5EF,#FAE8D8);border:1px solid #F0D0B8;border-radius:10px;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.recreate-banner{background:linear-gradient(135deg,var(--tint),#FAE8D8);border:1px solid var(--tint-line);border-radius:10px;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .recreate-banner p{font-size:0.78rem;color:var(--medium);flex:1}
 .recreate-banner strong{color:var(--accent)}
 .tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-bottom:1rem}
@@ -139,33 +145,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);
 .tool-icon{font-size:1.5rem}
 .tool-name{font-size:0.85rem;font-weight:500;color:var(--dark)}
 .tool-desc{font-size:0.75rem;color:var(--medium);line-height:1.5;flex:1}
-.tool-link{display:inline-block;padding:0.4rem 0.85rem;border-radius:8px;background:var(--accent);color:white;font-size:0.73rem;font-weight:500;text-align:center;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:background 0.15s}
-.tool-link:hover{background:#7D3817}
-.shop-banner{background:linear-gradient(135deg,#9B4A1F,#C17A3A);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.shop-banner-text h3{color:white;font-family:'Playfair Display',serif;font-size:1.1rem;font-style:italic;margin-bottom:4px}
-.shop-banner-text p{color:rgba(255,255,255,0.85);font-size:0.78rem}
-.shop-banner-btn{padding:0.55rem 1.2rem;border-radius:8px;background:white;color:var(--accent);font-size:0.82rem;font-weight:500;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;white-space:nowrap}
-.btn{padding:0.55rem 0.9rem;border-radius:8px;border:1.5px solid var(--light);background:white;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:500;color:var(--medium);transition:all 0.15s}
+.tool-link{display:inline-block;padding:0.4rem 0.85rem;border-radius:8px;background:var(--accent);color:white;font-size:0.73rem;font-weight:500;text-align:center;cursor:pointer;border:none;font-family:var(--f-body);transition:background 0.15s}
+.tool-link:hover{background:#a8285a}
+.shop-banner{background:linear-gradient(135deg,#c8326b,#e8692a);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.shop-banner-text h3{color:#fff;font-family:var(--f-body);font-weight:800;font-size:1.25rem;font-style:normal;letter-spacing:0.01em;margin-bottom:4px;text-shadow:0 1px 2px rgba(90,20,40,0.25)}
+.shop-banner-text p{color:#fff;font-size:0.9rem;font-weight:600}
+.shop-banner-btn{padding:0.55rem 1.2rem;border-radius:8px;background:white;color:var(--accent);font-size:0.82rem;font-weight:500;cursor:pointer;border:none;font-family:var(--f-body);white-space:nowrap}
+.btn{padding:0.55rem 0.9rem;border-radius:8px;border:1.5px solid var(--light);background:white;cursor:pointer;font-family:var(--f-body);font-size:0.8rem;font-weight:500;color:var(--medium);transition:all 0.15s}
 .btn:hover{background:var(--warm);border-color:var(--accent2);color:var(--accent)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:white}
-.btn.primary:hover{background:#7D3817}
+.btn.primary:hover{background:#a8285a}
 .btn.sm{padding:0.3rem 0.65rem;font-size:0.73rem}
 .cost-section{background:white;border-radius:12px;border:1px solid var(--light);padding:1.1rem;margin-bottom:1rem}
 .cost-section h3{font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--medium);margin-bottom:0.85rem}
 .cost-row{display:flex;align-items:center;gap:10px;margin-bottom:0.65rem}
 .cost-row label{font-size:0.8rem;color:var(--dark);flex:1}
-.price-input{width:80px;padding:0.42rem 0.65rem;border:1.5px solid var(--light);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;color:var(--dark);text-align:right}
+.price-input{width:80px;padding:0.42rem 0.65rem;border:1.5px solid var(--light);border-radius:8px;font-family:var(--f-body);font-size:0.82rem;background:white;color:var(--dark);text-align:right}
 .price-input:focus{outline:none;border-color:var(--accent)}
 .qty-label{font-size:0.75rem;color:var(--medium);width:70px;text-align:right}
 .cost-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:0.85rem}
 .cost-card{background:var(--warm);border-radius:10px;padding:0.9rem;text-align:center}
-.cost-card.accent{background:#FDF5EF;border:1px solid #F0D0B8}
-.cost-val{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--dark);display:block}
+.cost-card.accent{background:var(--tint);border:1px solid var(--tint-line)}
+.cost-val{font-family:var(--f-display);font-size:1.5rem;color:var(--dark);display:block}
 .cost-card.accent .cost-val{color:var(--accent)}
 .cost-lbl{font-size:0.67rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--medium);margin-top:2px;display:block}
 .tier-bar{display:flex;gap:6px;margin-bottom:1rem}
-.tier-btn{flex:1;padding:0.5rem;border:1.5px solid var(--light);border-radius:8px;background:white;cursor:pointer;font-size:0.75rem;font-family:'DM Sans',sans-serif;color:var(--medium);text-align:center;transition:all 0.15s}
-.tier-btn.active{border-color:var(--accent);background:#FDF5EF;color:var(--accent)}
+.tier-btn{flex:1;padding:0.5rem;border:1.5px solid var(--light);border-radius:8px;background:white;cursor:pointer;font-size:0.75rem;font-family:var(--f-body);color:var(--medium);text-align:center;transition:all 0.15s}
+.tier-btn.active{border-color:var(--accent);background:var(--tint);color:var(--accent)}
 .flavor-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:1rem}
 .flavor-card{border-radius:10px;padding:0.9rem;border:1px solid var(--light)}
 .flavor-name{font-size:0.8rem;font-weight:500;color:var(--dark);margin-bottom:6px}
@@ -174,7 +180,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);
 .flavor-score{font-size:0.7rem;color:var(--medium)}
 .balance-note{background:var(--warm);border-radius:10px;padding:0.8rem 1rem;font-size:0.8rem;color:var(--medium);line-height:1.6}
 .balance-note strong{color:var(--accent);font-weight:500}
-.export-preview{background:var(--warm);border-radius:10px;padding:1rem 1.1rem;margin-bottom:1rem;font-size:0.8rem;line-height:1.8;color:var(--dark);white-space:pre-wrap;max-height:260px;overflow-y:auto;font-family:'DM Sans',sans-serif}
+.export-preview{background:var(--warm);border-radius:10px;padding:1rem 1.1rem;margin-bottom:1rem;font-size:0.8rem;line-height:1.8;color:var(--dark);white-space:pre-wrap;max-height:260px;overflow-y:auto;font-family:var(--f-body)}
 .export-btns{display:flex;gap:8px;flex-wrap:wrap}
 .copy-notice{font-size:0.75rem;color:var(--green);margin-left:8px;opacity:0;transition:opacity 0.3s}
 .copy-notice.show{opacity:1}
@@ -194,7 +200,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);
 .pairing-item{background:var(--warm);border-radius:8px;padding:0.55rem 0.75rem;font-size:0.75rem}
 .pairing-item strong{display:block;color:var(--dark);font-weight:500;margin-bottom:1px}
 .pairing-item span{color:var(--medium)}
-select{font-family:'DM Sans',sans-serif}
+select{font-family:var(--f-body)}
 
 /* ---- round 1 additions ---- */
 .mix-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:0.85rem}
@@ -212,12 +218,12 @@ input.guest-num:focus{outline:none;border-color:var(--accent)}
 .size-inputs{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:0.6rem}
 .size-field{display:flex;flex-direction:column;gap:3px;font-size:0.72rem;color:var(--medium)}
 .size-field span{font-size:0.8rem;color:var(--dark)}
-.size-field input{width:80px;padding:0.45rem 0.6rem;border:1.5px solid var(--light);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;color:var(--dark)}
+.size-field input{width:80px;padding:0.45rem 0.6rem;border:1.5px solid var(--light);border-radius:8px;font-family:var(--f-body);font-size:0.9rem;color:var(--dark)}
 .size-field input:focus{outline:none;border-color:var(--accent)}
 .size-x{color:var(--medium);padding-bottom:0.55rem}
 .preset-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:0.72rem;color:var(--medium);margin-bottom:0.9rem}
-.preset-chip{padding:3px 9px;border-radius:20px;border:1.5px solid var(--light);background:white;cursor:pointer;font-size:0.72rem;color:var(--medium);font-family:'DM Sans',sans-serif}
-.preset-chip.active{border-color:var(--accent);color:var(--accent);background:#FDF5EF}
+.preset-chip{padding:3px 9px;border-radius:20px;border:1.5px solid var(--light);background:white;cursor:pointer;font-size:0.72rem;color:var(--medium);font-family:var(--f-body)}
+.preset-chip.active{border-color:var(--accent);color:var(--accent);background:var(--tint)}
 .vboard-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:0.6rem}
 .piece-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:38px;background:var(--warm);border-radius:10px;padding:0.35rem 0.6rem;margin-bottom:0.6rem;font-size:0.8rem}
 .piece-toolbar strong{font-weight:500;margin-right:2px}
@@ -252,10 +258,10 @@ input.guest-num:focus{outline:none;border-color:var(--accent)}
 .photo-preview img{max-height:90px;border-radius:8px}
 .community-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .community-empty{grid-column:1/-1;text-align:center;padding:2rem;color:var(--medium);font-style:italic;font-size:0.85rem}
-.featured-tag{font-size:0.62rem;background:#FDF5EF;color:var(--accent);padding:2px 6px;border-radius:10px;margin-left:4px}
+.featured-tag{font-size:0.62rem;background:var(--tint);color:var(--accent);padding:2px 6px;border-radius:10px;margin-left:4px}
 .unit-label{font-size:0.72rem;color:var(--medium);width:70px;text-align:right}
 .custom-add{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:0.75rem;color:var(--medium);margin-bottom:0.6rem}
-.custom-card{border:1.5px solid var(--light);border-radius:12px;padding:0.85rem;margin-bottom:0.7rem;background:#FFFDF9}
+.custom-card{border:1.5px solid var(--light);border-radius:12px;padding:0.85rem;margin-bottom:0.7rem;background:#fcfbff}
 .custom-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;font-size:0.85rem}
 .custom-head strong{font-weight:500}
 .custom-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:0.6rem}
@@ -294,26 +300,298 @@ button:disabled{opacity:0.6;cursor:wait}
   .unit-label{width:auto;margin-left:auto}
   .results-grid{grid-template-columns:repeat(2,1fr)}
 }
+.header{position:relative}
+.account-bar{position:absolute;top:0.6rem;right:0;display:flex;align-items:center;gap:8px;font-size:0.75rem;color:var(--medium)}
+.acct-email{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acct-badge{background:var(--green);color:white;border-radius:10px;padding:2px 8px;font-weight:500}
+.acct-link{background:none;border:none;color:var(--accent);font:inherit;font-weight:500;cursor:pointer;text-decoration:underline;padding:0}
+.tab-locked .tab-icon::after{content:"\1F512";font-size:0.6rem;margin-left:2px;vertical-align:top}
+.panel.locked{position:relative;min-height:420px}
+.panel.locked>*:not(.paywall){filter:blur(3px);opacity:0.45;pointer-events:none;user-select:none}
+.paywall{position:absolute;inset:0;z-index:20;display:flex;align-items:flex-start;justify-content:center;padding-top:40px}
+.paywall-card{background:white;border:1px solid var(--light);border-radius:14px;box-shadow:0 10px 30px rgba(31,26,46,0.15);padding:1.6rem 1.4rem;max-width:400px;text-align:center}
+.paywall-icon{font-size:1.8rem;margin-bottom:0.4rem}
+.paywall-card h3{font-family:var(--f-display);color:var(--dark);font-size:1.25rem;margin-bottom:0.6rem}
+.paywall-card p{font-size:0.88rem;color:var(--medium);line-height:1.5;margin-bottom:0.8rem}
+.paywall-actions{margin:1rem 0 0.6rem}
+.paywall-actions .btn{font-size:0.95rem;padding:0.7rem 1.3rem;text-decoration:none;display:inline-block}
+.paywall-small{font-size:0.78rem !important;margin-bottom:0.3rem !important}
+.share-lock{font-size:0.8rem;color:var(--medium);text-align:center;margin-top:6px}
+.modal{position:fixed;inset:0;background:rgba(31,26,46,0.45);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal.open{display:flex}
+.modal-card{background:white;border-radius:14px;padding:1.5rem;width:100%;max-width:380px;position:relative}
+.modal-card h3{font-family:var(--f-display);color:var(--dark);margin-bottom:0.4rem}
+.modal-card p{font-size:0.85rem;color:var(--medium);line-height:1.5;margin-bottom:0.8rem}
+.modal-card input{width:100%;padding:0.7rem;border:1.5px solid var(--light);border-radius:8px;font:inherit;font-size:16px;margin-bottom:0.6rem}
+.modal-card .btn.primary{width:100%;padding:0.75rem;font-size:0.95rem}
+.modal-close{position:absolute;top:8px;right:12px;background:none;border:none;font-size:1.4rem;color:var(--medium);cursor:pointer}
+.signin-error{color:#A33;font-size:0.8rem;min-height:1em}
+@media(max-width:600px){.account-bar{position:static;justify-content:center;margin-bottom:0.6rem}.header{padding-top:0.6rem}}
+
+/* ===== Confetti Table relaunch ===== */
+body{font-size:15px;background:var(--cream)}
+.app{max-width:860px;padding:0 max(16px,env(safe-area-inset-right,0px)) 1.5rem max(16px,env(safe-area-inset-left,0px))}
+.header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;text-align:left;padding:1.4rem 0 0.6rem;border-bottom:none;margin-bottom:0;flex-wrap:wrap}
+.logo{font-family:var(--f-display);font-weight:400;font-size:clamp(2rem,7vw,2.6rem);line-height:1;color:var(--ink);position:relative;display:inline-block;padding-top:25px;letter-spacing:0}
+.logo-sun{position:absolute;right:-10px;top:2px;width:36px;height:22px}
+.logo-sun .sun,.byqc .sun{width:100%;height:100%;display:block}
+.header .tagline{text-transform:none;letter-spacing:0;font-weight:800;color:var(--ink);font-size:1rem;margin-top:6px;letter-spacing:0;text-transform:none}
+.account-bar{position:static;font-size:0.8rem;padding-bottom:4px}
+.acct-badge{background:var(--mint)}
+.party-now{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;background:var(--warm);border:none;border-radius:999px;padding:6px 14px;margin:0.4rem 0 0.8rem;font:inherit;font-size:0.82rem;color:var(--ink);cursor:pointer;max-width:100%}
+.party-now b{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60vw}
+.muted{color:var(--medium)}
+.small{font-size:0.78rem}
+.tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;background:transparent;padding:2px 2px 8px;margin:0 0 1rem;border-radius:0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;min-width:0;display:flex;align-items:center;gap:6px;padding:0.5rem 0.85rem;border-radius:999px;background:var(--warm);font-size:0.85rem;font-weight:700;color:var(--medium);transition:background .15s,color .15s}
+.tab .tab-icon{display:inline-flex;margin:0;font-size:inherit}
+.tab:hover{color:var(--ink)}
+.tab.active{background:var(--ink);color:#fff;box-shadow:none}
+.tab:focus-visible,.btn:focus-visible,.tile:focus-visible,.party-chip:focus-visible{outline:3px solid var(--lemon);outline-offset:2px}
+.tab-locked .tab-icon::after{content:none}
+.tab-locked::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--berry);margin-left:-2px}
+.card,.board-section,.board-preview,.vboard-wrap,.cost-section,.tip-card,.tool-card,.community-card,.share-modal{border-radius:18px}
+.card h3,.board-section h3,.cost-section h3,.board-preview h3,.vboard-wrap h3,.share-modal h3{font-weight:800;color:var(--ink);letter-spacing:0.06em}
+.btn{border-radius:999px;font-weight:700}
+.btn.primary{background:var(--berry);border-color:var(--berry)}
+.btn.primary:hover{background:#b52d5f;border-color:#b52d5f;color:#fff}
+.btn.on{background:var(--mint);border-color:var(--mint);color:#fff}
+.btn.danger{background:#c0392b;border-color:#c0392b;color:#fff}
+.btn.danger-link{border:none;background:none;color:#b0303a;padding-left:0;display:inline-flex;align-items:center;gap:4px}
+.guest-num,.result-qty,.cost-val{font-family:var(--f-body)!important;font-weight:800}
+.result-item.hl,.cost-card.accent{background:var(--tint);border-color:var(--tint-line)}
+.tool-link{background:var(--berry);border-radius:999px}
+.item-chip.selected{background:var(--tint);border-color:var(--berry);color:var(--accent)}
+.filter-btn.active{background:var(--ink);border-color:var(--ink)}
+.paywall-icon .sun{width:56px;height:36px;margin:0 auto}
+.paywall-card h3,.modal-card h3{font-family:var(--f-body);font-weight:800;font-size:1.25rem}
+.paywall-card{border-radius:20px}
+.modal-card{border-radius:20px;max-height:calc(100vh - 32px);overflow:auto}
+.modal-card .btn.primary{width:100%}
+.extras-card{max-width:420px;padding:0}
+.extras-card .paywall-card{box-shadow:none;border:none;max-width:none}
+.form-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pf-delete{margin-top:0.8rem;font-size:0.82rem;color:var(--medium);line-height:1.5}
+.pf-delete .btn.sm.danger{width:auto;margin-top:6px}
+.site-footer .byqc{display:flex;align-items:center;justify-content:center;gap:6px;color:#0c6980;font-size:0.82rem;margin-bottom:6px}
+.site-footer .byqc span:first-child{width:24px;height:15px;display:inline-block}
+.gather{font-family:var(--f-display);color:var(--berry);font-size:0.9rem}
+.toast{background:var(--ink);border-radius:999px}
+
+/* Home */
+.hello{color:var(--medium);margin:0 0 0.7rem;font-weight:600}
+.event{position:relative;background:var(--berry);color:#fff;border-radius:24px;padding:1.2rem 1.2rem 1rem;overflow:hidden}
+.event::after{content:"";position:absolute;right:-30px;bottom:-40px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.08)}
+.event small{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:800;opacity:0.9}
+.event-name{font-family:var(--f-display);font-weight:400;font-size:clamp(1.6rem,6vw,2.2rem);line-height:1.1;margin:4px 0 4px;padding-right:76px;overflow-wrap:anywhere}
+.event-meta{font-size:0.92rem;opacity:0.95;padding-right:64px}
+.event-stats{display:flex;gap:14px;flex-wrap:wrap;font-size:0.8rem;margin-top:10px;opacity:0.9}
+.event-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;position:relative;z-index:1}
+.pill-btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:999px;padding:0.45rem 0.85rem;background:rgba(255,255,255,0.2);color:#fff;font:inherit;font-weight:700;font-size:0.82rem;cursor:pointer}
+.pill-btn:hover{background:rgba(255,255,255,0.3)}
+.count{position:absolute;right:16px;top:16px;background:var(--lemon);color:var(--ink);border-radius:16px;padding:7px 11px;text-align:center;font-weight:800;font-size:1.4rem;line-height:1;z-index:1}
+.count span{display:block;font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;margin-top:3px}
+.count.done{background:rgba(255,255,255,0.25);color:#fff;font-size:0.9rem}
+.party-switch{display:flex;gap:8px;overflow-x:auto;padding:10px 2px 4px;scrollbar-width:none}
+.party-switch::-webkit-scrollbar{display:none}
+.party-chip{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:1.5px solid var(--light);background:#fff;border-radius:16px;padding:8px 14px;font:inherit;cursor:pointer;color:var(--ink);max-width:200px;text-align:left}
+.party-chip b{font-weight:800;font-size:0.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px}
+.party-chip span{font-size:0.74rem;color:var(--medium);display:inline-flex;align-items:center;gap:3px}
+.party-chip.add{flex-direction:row;align-items:center;gap:6px;border-style:dashed;color:var(--accent)}
+.party-chip.add span{margin-left:4px}
+.sec{font-size:0.78rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--medium);margin:1.2rem 0 0.6rem}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:96px;border:none;border-radius:20px;padding:12px 8px;font:inherit;cursor:pointer;color:#fff;text-align:center;transition:transform .12s}
+.tile:hover{transform:translateY(-2px)}
+.tile b{font-size:0.86rem;font-weight:800;line-height:1.2}
+.tile small{font-size:0.68rem;font-weight:700;opacity:0.9;display:inline-flex;align-items:center;gap:3px}
+.tile-lock{background:rgba(0,0,0,0.18);border-radius:999px;padding:1px 7px}
+.c-berry{background:var(--berry)}.c-tangerine{background:var(--tangerine)}.c-mint{background:var(--mint)}.c-lilac{background:var(--lilac)}.c-ink{background:var(--ink)}.c-sky{background:var(--sky)}
+.c-lemon{background:var(--lemon);color:var(--ink)}
+.tile.soon{background:var(--warm);color:var(--medium);cursor:default;border:1.5px dashed var(--light)}
+.tile.soon:hover{transform:none}
+.notes-card textarea{width:100%;border:1.5px solid var(--light);border-radius:12px;padding:0.7rem;font:inherit;font-size:16px;resize:vertical;color:var(--ink)}
+.notes-card textarea:focus{outline:none;border-color:var(--lilac)}
+.tip-box{background:#eceaff;border-radius:18px;padding:0.9rem 1rem;font-size:0.9rem;line-height:1.5;margin-top:1rem}
+.tip-box b{display:block;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--medium);margin-bottom:3px}
+
+/* Recipes */
+.menu-card{border:2px solid var(--tint-line)}
+.menu-list{display:flex;flex-direction:column;gap:8px;margin-bottom:0.8rem}
+.menu-row{display:flex;align-items:center;gap:10px;background:var(--warm);border-radius:14px;padding:0.6rem 0.8rem;flex-wrap:wrap}
+.menu-row>div:first-child{flex:1;min-width:140px;display:flex;flex-direction:column}
+.stepper{display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:700}
+.stepper button{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--light);background:#fff;cursor:pointer;font-size:1rem;color:var(--accent)}
+.menu-row{flex-wrap:nowrap}.menu-row>div:first-child{min-width:0}
+.x-btn{border:none;background:none;font-size:1.3rem;color:var(--medium);cursor:pointer;padding:0 4px}
+.scale-row{margin:0.3rem 0 0.8rem;font-size:0.88rem;font-weight:600}
+.scale-row input{width:18px;height:18px;accent-color:var(--berry)}
+.extras-tag{display:inline-flex;align-items:center;gap:3px;font-size:0.7rem;background:var(--tint);color:var(--accent);border-radius:999px;padding:1px 8px;font-weight:700}
+.recipes-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:1.3rem 0 0.7rem}
+.recipes-head .btn{margin-left:auto;display:inline-flex;align-items:center;gap:4px}
+.recipe-card{padding:0.8rem 1rem}
+.recipe-card.on-menu{border-color:var(--mint)}
+.recipe-top{display:flex;align-items:center;gap:10px}
+.recipe-name{flex:1;min-width:0;text-align:left;border:none;background:none;font:inherit;font-weight:800;font-size:1rem;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;padding:0;overflow-wrap:anywhere}
+.recipe-name .small{font-weight:600}
+.recipe-detail{margin-top:0.7rem;border-top:1px solid var(--light);padding-top:0.7rem;font-size:0.9rem}
+.recipe-detail h4{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--medium);margin:0.3rem 0}
+.recipe-detail ul{padding-left:1.1rem;margin-bottom:0.6rem}
+.pre{white-space:pre-wrap;line-height:1.55}
+.row-gap{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:0.6rem}
+.row-gap.end{justify-content:flex-end}
+.empty-recipes p{color:var(--medium);line-height:1.55}
+.recipe-form textarea{font-size:16px}
+.share-form-row input,.share-form-row textarea,.share-form-row select{font-size:16px;border-radius:12px}
+.recipe-times{font-weight:700;color:var(--accent);margin-bottom:0.4rem}
+.share-form-row select{appearance:auto}
+.blog-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:0.6rem}
+.blog-row{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 10px;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.blog-card{flex:0 0 240px;scroll-snap-align:start;display:flex;flex-direction:column;gap:5px;background:#fff;border:1px solid var(--light);border-radius:18px;padding:0 0 12px;overflow:hidden;text-decoration:none;color:var(--ink)}
+.blog-card:hover{border-color:var(--tint-line)}
+.blog-pic{display:block;height:130px;position:relative;overflow:hidden}
+.blog-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.blog-card b{font-weight:800;font-size:0.92rem;line-height:1.3;padding:4px 12px 0}
+.blog-sum{font-size:0.8rem;color:var(--medium);line-height:1.45;padding:0 12px}
+.blog-read{margin-top:auto;font-size:0.8rem;font-weight:800;color:var(--accent);padding:4px 12px 0}
+.tip-blog{margin-top:0.6rem}
+.tip-blog a{color:var(--accent);font-weight:700}
+.tip-box a{color:var(--accent);font-weight:700}
+/* Guests */
+.c-coral{background:#ef6f5e}
+.rsvp-totals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:0.8rem}
+.tot{border-radius:16px;padding:10px 6px;text-align:center;color:#fff}
+.tot.c-lemon{color:var(--ink)}
+.tot b{display:block;font-size:1.5rem;font-weight:800;line-height:1.1}
+.tot span{font-size:0.72rem;font-weight:700}
+.invite-card{border:2px solid var(--tint-line)}
+.link-row{display:flex;gap:8px;align-items:center}
+.link-row input{flex:1;min-width:0;padding:0.55rem 0.7rem;border:1.5px solid var(--light);border-radius:12px;font:inherit;font-size:14px;color:var(--ink);background:var(--warm)}
+.guest-row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--light);border-radius:14px;padding:0.6rem 0.8rem;margin-bottom:8px}
+.guest-main{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;text-align:left;border:none;background:none;font:inherit;color:var(--ink);cursor:pointer;padding:0;overflow-wrap:anywhere}
+.guest-main b{font-weight:800}
+.guest-note{font-size:0.78rem;color:var(--accent);margin-top:2px}
+.guest-with{font-size:0.8rem;color:var(--medium);margin-top:2px}
+.pill{flex:0 0 auto;border-radius:999px;padding:3px 10px;font-size:0.75rem;font-weight:800;white-space:nowrap}
+.s-yes{background:#d8f4ec;color:#11705c}.s-maybe{background:#fff3c4;color:#7a5b00}.s-no{background:var(--tint);color:var(--accent)}.s-invited{background:#ece9fd;color:#5446b8}
+.updates-card{margin-top:1rem}
+/* RSVP page */
+body.rsvp-mode .app{display:none}
+.rsvp-view{max-width:520px;margin:0 auto;padding:1rem max(16px,env(safe-area-inset-right,0px)) 2rem max(16px,env(safe-area-inset-left,0px))}
+.rsvp-brand{text-align:center;margin:0.5rem 0 1rem}
+.small-logo{font-family:var(--f-display);font-size:1.5rem;color:var(--ink);position:relative;display:inline-block;padding-top:16px}
+.small-logo .logo-sun{width:24px;height:15px;right:-8px;top:0}
+.rsvp-card{background:#fff;border:1px solid var(--light);border-radius:24px;overflow:hidden}
+.rsvp-hero{background:var(--berry);color:#fff;padding:1.4rem 1.3rem 1.2rem}
+.rsvp-hero small{font-size:0.75rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;opacity:0.9}
+.rsvp-hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(1.8rem,8vw,2.4rem);line-height:1.1;margin:6px 0 8px;overflow-wrap:anywhere}
+.rsvp-hero p{display:flex;align-items:center;gap:6px;font-weight:700;margin-top:3px}
+.rsvp-msg{background:#eceaff;margin:1rem 1.2rem 0;border-radius:16px;padding:0.8rem 1rem;white-space:pre-wrap;line-height:1.5}
+.rsvp-form{padding:1rem 1.2rem 1.3rem}
+.rsvp-form h3{font-weight:800;font-size:1.1rem;margin-bottom:0.6rem}
+.rsvp-choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.rsvp-choice{border:2px solid var(--light);background:#fff;border-radius:16px;padding:0.8rem 0.3rem;font:inherit;font-weight:800;color:var(--ink);cursor:pointer}
+.rsvp-choice.on[data-v=yes]{background:var(--mint);border-color:var(--mint);color:#fff}
+.rsvp-choice.on[data-v=maybe]{background:var(--lemon);border-color:var(--lemon)}
+.rsvp-choice.on[data-v=no]{background:var(--berry);border-color:var(--berry);color:#fff}
+.rsvp-consent{margin:0.4rem 0;font-size:0.9rem}
+.rsvp-send{width:100%;padding:0.8rem;font-size:1rem;margin-top:0.4rem}
+.rsvp-thanks{padding:1.4rem 1.2rem;text-align:center}
+.rsvp-thanks h2{font-weight:800;font-size:1.3rem;margin-bottom:1rem}
+.rsvp-closed{padding:1.2rem}
+.rsvp-foot{text-align:center;font-size:0.8rem;color:var(--medium);margin-top:1rem;line-height:1.6}
+.rsvp-foot a{color:var(--accent);font-weight:700}
+/* To-do */
+.seg{display:inline-flex;background:var(--warm);border-radius:999px;padding:3px;gap:2px;margin:1.2rem 0 0.6rem}
+.seg button{border:none;background:none;font:inherit;font-weight:800;font-size:0.85rem;color:var(--medium);padding:0.4rem 0.9rem;border-radius:999px;cursor:pointer}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(31,26,46,0.1)}
+.todo-add{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0.6rem}
+.todo-add input[type=text]{flex:1;min-width:150px;padding:0.55rem 0.75rem;border:1.5px solid var(--light);border-radius:12px;font:inherit;font-size:16px}
+.todo-add input[type=date]{padding:0.45rem 0.5rem;border:1.5px solid var(--light);border-radius:12px;font:inherit;font-size:14px;color:var(--medium)}
+.todo-item{display:flex;align-items:center;gap:10px;padding:0.5rem 0.2rem;border-bottom:1px solid var(--light)}
+.todo-item:last-child{border-bottom:none}
+.todo-item input{width:20px;height:20px;accent-color:var(--mint);flex:0 0 auto}
+.todo-text{flex:1;min-width:0;overflow-wrap:anywhere}
+.todo-item.done .todo-text{text-decoration:line-through;color:var(--medium)}
+.todo-due{font-size:0.75rem;font-weight:700;color:var(--medium);white-space:nowrap}
+.todo-due.late{color:var(--accent)}
+.code-row{display:flex;gap:8px;margin:0.6rem 0}
+.modal-card .code-row .btn.primary{flex:0 0 auto;width:auto;padding:0.6rem 1.1rem}
+.modal-card .code-row input{margin:0}
+.code-row input{flex:1;min-width:0;padding:0.6rem 0.8rem;border:1.5px solid var(--light);border-radius:12px;font:inherit;font-size:18px;letter-spacing:3px}
+.todo-del{border:none;background:none;color:var(--medium);cursor:pointer;padding:4px;display:inline-flex;border-radius:8px}
+.todo-del:hover{color:var(--accent);background:var(--warm)}
+/* colored buttons: every button carries one of the confetti colors */
+.btn{background:#efecfd;border-color:#efecfd;color:#4a3fb0}
+.btn:hover{background:#e0d9fc;border-color:#e0d9fc;color:#3a2f96}
+.btn.danger-link,.btn.danger-link:hover{background:none;border:none;color:#b0303a}
+.guest-btn{background:var(--mint);border-color:var(--mint);color:#fff}
+.guest-btn:hover{background:#2fa88e;border-color:#2fa88e;color:#fff}
+.meal-btn,.tier-btn{background:#fff1e6;border-color:#fff1e6;color:#a04e12}
+.filter-btn{background:#e6f3fb;border-color:#e6f3fb;color:#1f6a99}
+.shop-banner-btn{background:var(--lemon);color:var(--ink);font-weight:800}
+.party-chip{background:#e6f3fb;border-color:#e6f3fb}
+.party-chip.add{background:#fff;border-color:var(--tint-line)}
+.rsvp-choice[data-v=yes]{background:#e5f7f2;border-color:#e5f7f2}
+.rsvp-choice[data-v=maybe]{background:#fff8dc;border-color:#fff8dc}
+.rsvp-choice[data-v=no]{background:#fde8f0;border-color:#fde8f0}
+.seg button.on{color:var(--berry)}
+.tab:nth-child(6n+1){--tc:var(--berry);--tt:#fde8f0}
+.tab:nth-child(6n+2){--tc:var(--tangerine);--tt:#fff1e6}
+.tab:nth-child(6n+3){--tc:#e0b000;--tt:#fff8dc}
+.tab:nth-child(6n+4){--tc:var(--mint);--tt:#e5f7f2}
+.tab:nth-child(6n+5){--tc:var(--lilac);--tt:#efecfd}
+.tab:nth-child(6n+6){--tc:var(--sky);--tt:#e6f3fb}
+.tabs .tab{background:var(--tt)}
+.tabs .tab .tab-icon{color:var(--tc)}
+.tabs .tab.active{background:var(--tc);color:#fff}
+.tabs .tab.active .tab-icon{color:#fff}
+.item-from{display:block;font-size:0.72rem;color:var(--medium)}
+@media (max-width:600px){
+  .tabs{display:flex;grid-template-columns:none}
+  .tab{font-size:0.85rem;padding:0.5rem 0.8rem}
+  .tab-icon{font-size:inherit;margin-bottom:0}
+  .account-bar{justify-content:flex-start;margin-bottom:0}
+  .header{padding-top:1rem}
+  .tiles{gap:8px}
+  .tile{min-height:88px;border-radius:18px}
+  .tile b{font-size:0.8rem}
+}
+@media (min-width:760px){.tabs{flex-wrap:wrap;overflow:visible}}
+@media (max-width:420px){.menu-row{flex-wrap:wrap}.menu-row .x-btn{margin-left:auto}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
+<div id="rsvpView" class="rsvp-view" hidden></div>
 <div class="app">
-  <div class="header"><h1>Board<span>craft</span></h1><p>Charcuterie planner &amp; guide</p></div>
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('calc')"><span class="tab-icon">&#9878;</span>Qty</button>
-    <button class="tab" onclick="switchTab('board')"><span class="tab-icon">&#129472;</span>Board</button>
-    <button class="tab" onclick="switchTab('visual')"><span class="tab-icon">&#127912;</span>Style</button>
-    <button class="tab" onclick="switchTab('community')"><span class="tab-icon">&#10024;</span>Community</button>
-    <button class="tab" onclick="switchTab('shop')"><span class="tab-icon">&#128722;</span>Shopping</button>
-    <button class="tab" onclick="switchTab('cost')"><span class="tab-icon">&#128176;</span>Cost</button>
-    <button class="tab" onclick="switchTab('flavor')"><span class="tab-icon">&#128069;</span>Flavor</button>
-    <button class="tab" onclick="switchTab('tools')"><span class="tab-icon">&#128298;</span>Tools</button>
-    <button class="tab" onclick="switchTab('export')"><span class="tab-icon">&#128203;</span>Export</button>
-    <button class="tab" onclick="switchTab('tips')"><span class="tab-icon">&#10022;</span>Tips</button>
-  </div>
-  <div id="calc" class="panel active">
+  <header class="header">
+    <div class="brand"><h1 class="logo">BoardCraft<span class="logo-sun" id="logoSun"></span></h1><p class="tagline">Plan the party. Craft the moment.</p></div>
+    <div class="account-bar" id="accountBar"></div>
+  </header>
+  <button class="party-now" onclick="switchTab('home')"><span class="muted">Planning</span> <b id="partyNow"></b> <span class="muted">· switch</span></button>
+  <nav class="tabs" aria-label="Sections">
+    <button class="tab active" data-tab="home" onclick="switchTab('home')"><span class="tab-icon" data-icon="home"></span>Home</button>
+    <button class="tab" data-tab="calc" onclick="switchTab('calc')"><span class="tab-icon" data-icon="qty"></span>Qty</button>
+    <button class="tab" data-tab="board" onclick="switchTab('board')"><span class="tab-icon" data-icon="board"></span>Board</button>
+    <button class="tab" data-tab="visual" onclick="switchTab('visual')"><span class="tab-icon" data-icon="style"></span>Style</button>
+    <button class="tab" data-tab="recipes" onclick="switchTab('recipes')"><span class="tab-icon" data-icon="recipes"></span>Recipes</button>
+    <button class="tab" data-tab="guests" onclick="switchTab('guests')"><span class="tab-icon" data-icon="guests"></span>Guests</button>
+    <button class="tab" data-tab="shop" onclick="switchTab('shop')"><span class="tab-icon" data-icon="shop"></span>Shopping</button>
+    <button class="tab" data-tab="cost" onclick="switchTab('cost')"><span class="tab-icon" data-icon="cost"></span>Cost</button>
+    <button class="tab" data-tab="flavor" onclick="switchTab('flavor')"><span class="tab-icon" data-icon="flavor"></span>Flavor</button>
+    <button class="tab" data-tab="export" onclick="switchTab('export')"><span class="tab-icon" data-icon="export"></span>Export</button>
+    <button class="tab" data-tab="community" onclick="switchTab('community')"><span class="tab-icon" data-icon="community"></span>Community</button>
+    <button class="tab" data-tab="tools" onclick="switchTab('tools')"><span class="tab-icon" data-icon="tools"></span>Tools</button>
+    <button class="tab" data-tab="tips" onclick="switchTab('tips')"><span class="tab-icon" data-icon="tips"></span>Tips</button>
+  </nav>
+  <div id="home" class="panel active"></div>
+  <div id="recipes" class="panel"><div id="recipesBody"></div></div>
+  <div id="guests" class="panel"><div id="guestsBody"></div></div>
+  <div id="calc" class="panel">
     <div class="calc-grid">
-      <div class="card"><h3>Guest count</h3><p class="card-hint">Type a number or use + and &minus;</p><div class="guest-control"><button class="guest-btn" onclick="adjustGuests(-1)">&#8722;</button><input class="guest-num" id="guestNum" type="number" inputmode="numeric" min="1" max="2000" value="12" aria-label="Number of guests" onchange="setGuests(this.value)" onfocus="this.select()"><button class="guest-btn" onclick="adjustGuests(1)">+</button></div></div>
+      <div class="card"><h3>Guest count</h3><p class="card-hint">Type a number or use + and &minus;</p><div class="guest-control"><button class="guest-btn" onclick="adjustGuests(-1)">&#8722;</button><input class="guest-num" id="guestNum" type="number" inputmode="numeric" min="0" max="2000" value="0" aria-label="Number of guests" onchange="setGuests(this.value)" onfocus="this.select()"><button class="guest-btn" onclick="adjustGuests(1)">+</button></div></div>
       <div class="card"><h3>Occasion type</h3><div class="meal-type" style="margin-top:0.4rem"><button class="meal-btn active" data-meal="appetizer" onclick="setMeal('appetizer',this)">Appetizer</button><button class="meal-btn" data-meal="main" onclick="setMeal('main',this)">Main event</button><button class="meal-btn" data-meal="grazing" onclick="setMeal('grazing',this)">All-day graze</button></div></div>
       <div class="card full-card"><div class="mix-head"><h3>Mix preferences</h3><button class="btn sm" onclick="resetMix()">Reset to balanced</button></div><p class="card-hint">How the food is split. Always adds up to 100%.</p>
         <div class="range-row"><label>Meat-forward</label><input type="range" min="0" max="100" value="25" step="1" id="meatSlider" oninput="setMix('meat',this.value)"><span id="meatPct">40%</span></div>
@@ -353,7 +631,7 @@ button:disabled{opacity:0.6;cursor:wait}
     <div class="recreate-banner" id="shareFromVisual" style="display:none"><p>Happy with your layout? <strong>Share it with the community!</strong></p><button class="btn primary btn sm" onclick="switchTab('community')">Share board &rarr;</button></div>
   </div>
   <div id="community" class="panel">
-    <div class="upload-zone" onclick="toggleShareForm()"><div class="upload-icon">&#128248;</div><h4>Share your board</h4><p>Share a photo and your ingredient list so others can recreate it</p></div>
+    <div class="upload-zone" onclick="if(!shareNeedsExtras())toggleShareForm()"><div class="upload-icon">&#128248;</div><h4>Share your board</h4><p>Share a photo and your ingredient list so others can recreate it</p><p class="share-lock" id="shareLock">&#128274; Part of BoardCraft Extras</p></div>
     <div class="share-modal" id="shareForm" style="display:none">
       <h3>Share your creation</h3>
       <div class="share-form-row"><label>Board name</label><input type="text" maxlength="80" id="shareTitle" placeholder="e.g. Holiday Entertaining Board"></div>
@@ -383,6 +661,11 @@ button:disabled{opacity:0.6;cursor:wait}
       <div class="add-item-row"><input type="text" id="newItemInput" placeholder="Add board item..." onkeydown="if(event.key==='Enter')addCustomItem('board')"><select id="newItemCat" style="padding:0.5rem 0.65rem;border:1.5px solid var(--light);border-radius:8px;font-size:0.8rem;background:white;color:var(--medium)"><option value="meats">Meats</option><option value="cheeses">Cheeses</option><option value="produce">Produce</option><option value="crackers">Crackers</option><option value="accents">Accents</option><option value="spreads">Spreads</option><option value="specialty">Specialty</option><option value="other">Other</option></select><button class="btn primary" onclick="addCustomItem('board')">Add</button></div>
       <div id="shopList"></div><div style="text-align:center;color:var(--medium);font-size:0.8rem;font-style:italic;margin-top:0.5rem" id="emptyShop">No board items yet</div>
     </div>
+    <div class="card" style="margin-bottom:1rem">
+      <h3 style="margin-bottom:0.4rem">From your menu</h3>
+      <p class="card-hint" style="margin:0 0 0.6rem">Ingredients from the recipes on this party's menu, added together. Change the menu in the Recipes tab.</p>
+      <div id="menuList"></div><div style="text-align:center;color:var(--medium);font-size:0.8rem;font-style:italic;margin-top:0.5rem" id="emptyMenu">No recipes on the menu yet. <button class="acct-link" onclick="switchTab('recipes')">Add some</button></div>
+    </div>
     <hr class="section-divider">
     <div class="card">
       <h3 style="margin-bottom:0.7rem">General shopping list</h3>
@@ -404,31 +687,82 @@ button:disabled{opacity:0.6;cursor:wait}
     <div class="card"><h3>Suggested additions to balance</h3><div id="balanceSuggestions" style="font-size:0.82rem;color:var(--medium);line-height:1.7"></div></div>
   </div>
   <div id="tools" class="panel">
-    <div class="shop-banner"><div class="shop-banner-text"><h3>Quinn &amp; Co Gulf Coast</h3><p>Everything you need for the perfect board</p></div><button class="shop-banner-btn" onclick="window.open('https://quinnandcogulfcoast.com/shop','_blank')">Visit the shop &rarr;</button></div>
+    <div class="shop-banner"><div class="shop-banner-text"><h3>Quinn &amp; Co. Events</h3><p>Everything you need for the perfect board</p></div><button class="shop-banner-btn" onclick="window.open('https://quinnandcogulfcoast.com/shop','_blank')">Visit the shop &rarr;</button></div>
     <p class="affiliate-note">As an Amazon Associate I earn from qualifying purchases.</p>
     <div class="tools-grid" id="toolsGrid"></div>
   </div>
   <div id="export" class="panel">
     <div class="card"><h3>Event summary</h3>
-      <div style="display:flex;gap:8px;margin-bottom:0.85rem;flex-wrap:wrap">
-        <input type="text" id="eventName" placeholder="Event name" style="flex:1;min-width:160px;padding:0.5rem 0.8rem;border:1.5px solid var(--light);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;color:var(--dark)">
-        <input type="text" id="eventDate" placeholder="Date" style="width:120px;padding:0.5rem 0.8rem;border:1.5px solid var(--light);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:white;color:var(--dark)">
-        <button class="btn primary" onclick="buildExport()">Generate &rarr;</button>
-      </div>
+      <p class="card-hint" style="margin:0 0 0.7rem">A summary of this party: board, quantities, cost, menu and shopping list. The party name and date come from Home.</p>
+      <div style="margin-bottom:0.85rem"><button class="btn primary" onclick="buildExport()">Refresh summary</button></div>
       <div class="export-preview" id="exportPreview">Click "Generate" to build your board summary.</div>
       <div class="export-btns"><button class="btn primary" onclick="copyExport()">Copy to clipboard</button><button class="btn" onclick="printExport()">Print / Save PDF</button><span class="copy-notice" id="copyNotice" aria-live="polite">Copied!</span></div>
     </div>
   </div>
-  <div id="tips" class="panel"><div class="tips-grid" id="tipsGrid"></div></div>
-  <footer class="site-footer"></footer>
+  <div id="tips" class="panel">
+    <div class="blog-head"><h3 class="sec" style="margin:0">From the blog</h3><a class="acct-link" href="https://quinnandcogulfcoast.com/everyday-rituals-a-blog" target="_blank" rel="noopener">See all posts</a></div>
+    <div class="blog-row" id="blogRow"></div>
+    <h3 class="sec">Tips &amp; ideas</h3>
+    <div class="tips-grid" id="tipsGrid"></div>
+  </div>
+  <footer class="site-footer">
+    <p class="byqc"><span id="footSun"></span>by Quinn &amp; Co. · <span class="gather">Gather Beautifully.</span></p>
+    <p>Questions or help: <a id="contactLink" href="#">contact us</a></p>
+    <p style="margin-top:4px">BoardCraft Extras is a one-time $14.99 purchase. If it isn't right for you, email us within 7 days for a full refund.</p>
+  </footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="signInModal" onclick="if(event.target===this)closeSignIn()">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeSignIn()" aria-label="Close">&times;</button>
+    <form id="signInForm" onsubmit="return submitSignIn(event)">
+      <h3>Sign in to BoardCraft</h3>
+      <p>Enter your email and we'll send you a link. Tap it to sign in. No password needed.</p>
+      <input type="email" id="signInEmail" placeholder="you@example.com" autocomplete="email" required>
+      <div class="signin-error" id="signInError"></div>
+      <button class="btn primary" id="signInBtn" type="submit">Email me a sign-in link</button>
+    </form>
+    <div id="signInSent" style="display:none">
+      <h3>Check your email</h3>
+      <p>We sent an email to <strong id="signInSentTo"></strong>. Type the code from that email here, or tap the link in it on this device. It may take a minute, and it can land in spam.</p>
+      <form onsubmit="return submitSignInCode(event)" class="code-row">
+        <input id="signInCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Code" aria-label="Sign-in code">
+        <button class="btn primary" type="submit" id="signInCodeBtn">Sign in</button>
+      </form>
+      <p class="signin-error" id="signInCodeError"></p>
+      <button class="btn" onclick="closeSignIn()">Close</button>
+    </div>
+  </div>
+</div>
+<div class="modal" id="partyModal" onclick="if(event.target===this)closePartyForm()">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closePartyForm()" aria-label="Close">&times;</button>
+    <form onsubmit="return savePartyForm(event)">
+      <h3 id="partyFormTitle">Party details</h3>
+      <div class="share-form-row"><label for="pfName">Party name</label><input id="pfName" maxlength="60" placeholder="e.g. Friendsgiving" autocomplete="off"></div>
+      <div class="form-2"><div class="share-form-row"><label for="pfDate">Date</label><input id="pfDate" type="date"></div><div class="share-form-row"><label for="pfTime">Start time</label><select id="pfTime"></select></div></div>
+      <div class="share-form-row"><label for="pfPlace">Location</label><input id="pfPlace" maxlength="80" placeholder="e.g. Our backyard"></div>
+      <div class="share-form-row"><label for="pfGuests">How many guests?</label><input id="pfGuests" type="number" inputmode="numeric" min="0" max="2000" style="width:110px"></div>
+      <button class="btn primary" type="submit">Save</button>
+      <div id="pfDeleteRow" class="pf-delete"><button type="button" class="btn danger-link" onclick="askDeleteParty()">Delete this party</button>
+        <div id="pfConfirm" style="display:none">This removes the party's board, menu, shopping list and notes. Your saved recipes stay. <button type="button" class="btn sm danger" onclick="deleteParty()">Yes, delete it</button></div></div>
+    </form>
+  </div>
+</div>
+<div class="modal" id="extrasModal" onclick="if(event.target===this)closeExtras()">
+  <div class="modal-card extras-card"><button class="modal-close" onclick="closeExtras()" aria-label="Close">&times;</button><div id="extrasBody"></div></div>
+</div>
 <script src="js/store.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/data.js"></script>
 <script src="js/food.js"></script>
 <script src="js/community.js"></script>
 <script src="js/custom-food.js"></script>
 <script src="js/style-board.js"></script>
+<script src="js/account.js"></script>
+<script src="js/parties.js"></script>
+<script src="js/recipes.js"></script>
+<script src="js/guests.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
